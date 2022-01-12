@@ -46,22 +46,24 @@ def _copy_file(filepath: Path, dst_directory: Path):
     shutil.copy(str(filename), str(dst))
 
 
-def push_to_hub(repo_name: str,  # = repo_id
-               organization: str,
+def push_to_hub(repo_id: str,
                filename: str,
                commit_message: str,
                use_auth_token=True,
                local_repo_path="hub"):
     """
       Upload a model to Hugging Face Hub.
-      :param repo_name: name of the model repository from the Hugging Face Hub
-      :param organization: name of the organization
+      :param repo_id: repo_id: id of the model repository from the Hugging Face Hub
       :param filename: name of the model zip file from the repository
       :param commit_message: commit message
-      :use_auth_token
-      :local_repo_path: local repository path
+      :param use_auth_token
+      :param local_repo_path: local repository path
       """
     huggingface_token = HfFolder.get_token()
+
+    temp = repo_id.split('/')
+    repo_name = temp[0]
+    organization = temp[1]
 
     # Step 1: Clone or create the repo
     # Create the repo (or clone its content if it's nonempty)
