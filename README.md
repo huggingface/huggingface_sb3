@@ -5,14 +5,15 @@ A library to load and upload Stable-baselines3 models from the Hub.
 ## Installation
 ### With pip
 
-
+### Requirements
+You need to have git
 ## Examples
 [Todo: add colab tutorial]
 ### Case 1: I want to download a model from the Hub
 ```python
 import gym
 
-import huggingface_sb3
+from huggingface_sb3 import load_from_hub
 from stable_baselines3 import PPO
 
 env = gym.make("CartPole-v1")
@@ -22,7 +23,7 @@ model = PPO("MlpPolicy", env, verbose=1)
 # Retrieve the model from the hub
 ## repo_id =  id of the model repository from the Hugging Face Hub (repo_id = {organization}/{repo_name})
 ## filename = name of the model zip file from the repository
-checkpoint = load_from_hf(repo_id="ThomasSimonini/ppo-CartPole-v1", filename="CartPole-v1")
+checkpoint = load_from_hub(repo_id="ThomasSimonini/ppo-CartPole-v1", filename="CartPole-v1")
 PPO.load(checkpoint)
 
 obs = env.reset()
@@ -37,9 +38,20 @@ env.close()
 ```
 
 ### Case 2: I trained an agent and want to upload it to the Hub
+First you need to be logged in to Hugging Face:
+- If you're using Colab/Jupyter Notebooks:
+```python
+from huggingface_hub import notebook_login
+notebook_login()
+```
+- Else:
+```
+huggingface-cli login
+```
+Then:
 ```python
 import gym
-import huggingface_sb3
+from huggingface_sb3 import push_to_hub
 from stable_baselines3 import PPO
 
 # Create the environment
