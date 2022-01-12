@@ -53,7 +53,7 @@ def _copy_file(filepath: Path, dst_directory: Path):
     shutil.copy(str(filename), str(dst))
 
 
-def push_to_hf(repo_name: str,  # = repo_id
+def push_to_hub(repo_name: str,  # = repo_id
                organization: str,
                filename: str,
                commit_message: str,
