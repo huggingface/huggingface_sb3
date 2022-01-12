@@ -7,11 +7,12 @@ A library to load and upload Stable-baselines3 models from the Hub.
 
 
 ## Examples
+[Todo: add colab tutorial]
 ### Case 1: I want to download a model from the Hub
 ```python
 import gym
 
-import huggingface-sb3
+import huggingface_sb3
 from stable_baselines3 import PPO
 
 env = gym.make("CartPole-v1")
@@ -38,7 +39,7 @@ env.close()
 ### Case 2: I trained an agent and want to upload it to the Hub
 ```python
 import gym
-import huggingface-sb3
+import huggingface_sb3
 from stable_baselines3 import PPO
 
 # Create the environment
