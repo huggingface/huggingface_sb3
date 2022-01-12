@@ -1,11 +1,6 @@
 from setuptools import setup
 
 install_requires = [
-    "logging",
-    "os",
-    "urllib",
-    "shutil",
-    "pathlib",
     "huggingface_hub",
 ]
 
@@ -18,6 +13,6 @@ setup(
     author='Thomas Simonini',
     author_email='thomas.simonini@huggingface.co',
     description='Additional code for Stable-baselines3 to load and upload models from the Hub.',
-    install_requires=install_requires
+    install_requires=install_requires,
 
 )
