@@ -5,8 +5,7 @@ A library to load and upload Stable-baselines3 models from the Hub.
 ## Installation
 ### With pip
 
-### Requirements
-You need to have git
+
 ## Examples
 [Todo: add colab tutorial]
 ### Case 1: I want to download a model from the Hub
