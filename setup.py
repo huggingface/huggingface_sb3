@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='huggingface_sb3',
     version='1.0',
-    packages=[''],
+    packages=['huggingface_sb3'],
     url='https://github.com/huggingface/huggingface_sb3',
     license='',
     author='Thomas Simonini',
