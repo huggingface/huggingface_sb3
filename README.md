@@ -14,25 +14,27 @@ import gym
 
 from huggingface_sb3 import load_from_hub
 from stable_baselines3 import PPO
-
-env = gym.make("CartPole-v1")
-
-model = PPO("MlpPolicy", env, verbose=1)
+from stable_baselines3.common.evaluation import evaluate_policy
 
 # Retrieve the model from the hub
 ## repo_id =  id of the model repository from the Hugging Face Hub (repo_id = {organization}/{repo_name})
 ## filename = name of the model zip file from the repository
-checkpoint = load_from_hub(repo_id="ThomasSimonini/ppo-CartPole-v1", filename="CartPole-v1")
-PPO.load(checkpoint)
+checkpoint = load_from_hub(repo_id="ThomasSimonini/stable-baselines3-ppo-CartPole-v1", filename="CartPole-v1")
+model = PPO.load(checkpoint)
 
+# Evaluate the agent
+eval_env = gym.make('CartPole-v1')
+mean_reward, std_reward = evaluate_policy(model, eval_env, n_eval_episodes=10, deterministic=True)
+print(f"mean_reward={mean_reward:.2f} +/- {std_reward}")
+ 
+# Watch the agent play
 obs = env.reset()
 for i in range(1000):
-    action, _states = model.predict(obs, deterministic=True)
+    action, _state = model.predict(obs)
     obs, reward, done, info = env.step(action)
     env.render()
     if done:
-      obs = env.reset()
-
+        obs = env.reset()
 env.close()
 ```
 
@@ -60,16 +62,16 @@ env = gym.make('CartPole-v1')
 model = PPO('MlpPolicy', env, verbose=1)
 
 # Train it for 10000 timesteps
-model.learn(total_timesteps=10000)
+model.learn(total_timesteps=10)
 
 # Save the model 
 model.save("CartPole-v1")
 
 # Push this saved model to the hf repo
 # If this repo does not exists it will be created
+## repo_id =  id of the model repository from the Hugging Face Hub (repo_id = {organization}/{repo_name})
 ## filename: the name of the file == "name" inside model.save("CartPole-v1")
-push_to_hub(repo_name = "CartPole-v1",
-           organization = "ThomasSimonini",  
+push_to_hub(repo_id = "ThomasSimonini/test-CartPole-v1",
            filename = "CartPole-v1", 
            commit_message = "Added Cartpole-v1 trained model")
 ```
