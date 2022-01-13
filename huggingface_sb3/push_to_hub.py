@@ -64,6 +64,8 @@ def push_to_hub(repo_id: str,
     temp = repo_id.split('/')
     repo_name = temp[0]
     organization = temp[1]
+    print("REPO NAME: ", repo_name)
+    print("ORGANIZATION: ", organization)
 
     # Step 1: Clone or create the repo
     # Create the repo (or clone its content if it's nonempty)
