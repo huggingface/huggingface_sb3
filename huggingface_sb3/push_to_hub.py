@@ -66,7 +66,7 @@ def push_to_hub(repo_id: str,
     organization = temp[1]
     print("REPO NAME: ", repo_name)
     print("ORGANIZATION: ", organization)
-
+    print("HUGGING FACE TOKEN", huggingface_token)
     # Step 1: Clone or create the repo
     # Create the repo (or clone its content if it's nonempty)
     api = HfApi()
