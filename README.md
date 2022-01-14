@@ -4,7 +4,9 @@ A library to load and upload Stable-baselines3 models from the Hub.
 
 ## Installation
 ### With pip
-
+```
+pip install huggingface-sb3
+```
 
 ## Examples
 [Todo: add colab tutorial]
