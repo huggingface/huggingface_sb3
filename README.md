@@ -10,6 +10,7 @@ pip install huggingface-sb3
 
 ## Examples
 [Todo: add colab tutorial]
+
 ### Case 1: I want to download a model from the Hub
 ```python
 import gym
@@ -64,7 +65,7 @@ env = gym.make('CartPole-v1')
 model = PPO('MlpPolicy', env, verbose=1)
 
 # Train it for 10000 timesteps
-model.learn(total_timesteps=10)
+model.learn(total_timesteps=10000)
 
 # Save the model 
 model.save("CartPole-v1")
