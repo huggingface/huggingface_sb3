@@ -31,14 +31,14 @@ mean_reward, std_reward = evaluate_policy(model, eval_env, n_eval_episodes=10, d
 print(f"mean_reward={mean_reward:.2f} +/- {std_reward}")
  
 # Watch the agent play
-obs = env.reset()
+obs = eval_env.reset()
 for i in range(1000):
     action, _state = model.predict(obs)
-    obs, reward, done, info = env.step(action)
-    env.render()
+    obs, reward, done, info = eval_env.step(action)
+    #eval_env.render()
     if done:
-        obs = env.reset()
-env.close()
+        obs = eval_env.reset()
+eval_env.close()
 ```
 
 ### Case 2: I trained an agent and want to upload it to the Hub
