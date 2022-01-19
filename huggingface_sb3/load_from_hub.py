@@ -17,7 +17,8 @@ def load_from_hub(repo_id: str, filename: str) -> str:
         )
 
     # We check if filename has zip extension indicated or not
-    if filename.endswith('.zip') is False:
+    # TODO: For the next version we need to handle other extensions
+    if filename.endswith('.zip') is False and filename.endswith('.mp4') is False:
         filename += ".zip"
 
     try:

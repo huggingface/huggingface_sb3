@@ -38,7 +38,7 @@ def _copy_file(filepath: Path, dst_directory: Path):
     :param dst_directory: destination directory
     """
     # We check if filename has zip extension indicated or not
-    if filepath.name.endswith('.zip') is False:
+    if filepath.name.endswith('.zip') is False and filepath.name.endswith('.mp4') is False:
         filename = filepath.name + ".zip"
     else:
         filename = filepath.name
@@ -54,7 +54,7 @@ def push_to_hub(repo_id: str,
     """
       Upload a model to Hugging Face Hub.
       :param repo_id: repo_id: id of the model repository from the Hugging Face Hub
-      :param filename: name of the model zip file from the repository
+      :param filename: name of the model zip or mp4 file from the repository
       :param commit_message: commit message
       :param use_auth_token
       :param local_repo_path: local repository path
