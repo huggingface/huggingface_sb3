@@ -24,14 +24,14 @@ from stable_baselines3.common.evaluation import evaluate_policy
 ## filename = name of the model zip file from the repository
 checkpoint = load_from_hub(
     repo_id="sb3/demo-hf-CartPole-v1",
-    filename="ppo-CartPole-v1",
+    filename="ppo-CartPole-v1.zip",
 )
 model = PPO.load(checkpoint)
 
 # Evaluate the agent and watch it
 eval_env = gym.make("CartPole-v1")
 mean_reward, std_reward = evaluate_policy(
-    model, eval_env, render=True, n_eval_episodes=5, deterministic=True, warn=False
+    model, eval_env, render=False, n_eval_episodes=5, deterministic=True, warn=False
 )
 print(f"mean_reward={mean_reward:.2f} +/- {std_reward}")
 ```
@@ -67,7 +67,7 @@ model.save("ppo-CartPole-v1")
 ## filename: the name of the file == "name" inside model.save("ppo-CartPole-v1")
 push_to_hub(
     repo_id="sb3/demo-hf-CartPole-v1",
-    filename="ppo-CartPole-v1",
+    filename="ppo-CartPole-v1.zip",
     commit_message="Added Cartpole-v1 model trained with PPO",
 )
 ```

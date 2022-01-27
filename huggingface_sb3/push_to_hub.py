@@ -33,12 +33,12 @@ def _create_model_card(repo_dir: Path):
 
 def _copy_file(filepath: Path, dst_directory: Path):
     """
-    Copy the model.zip file to the correct directory
-    :param filepath: path of the model.zip file
+    Copy the file to the correct directory
+    :param filepath: path of the file
     :param dst_directory: destination directory
     """
-    dst = dst_directory / filepath
-    shutil.copy(str(filepath), str(dst))
+    dst = dst_directory / filepath.name
+    shutil.copy(str(filepath.name), str(dst))
 
 
 def push_to_hub(repo_id: str,
