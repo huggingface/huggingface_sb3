@@ -37,13 +37,8 @@ def _copy_file(filepath: Path, dst_directory: Path):
     :param filepath: path of the model.zip file
     :param dst_directory: destination directory
     """
-    # We check if filename has zip extension indicated or not
-    if filepath.name.endswith('.zip') is False and filepath.name.endswith('.mp4') is False:
-        filename = filepath.name + ".zip"
-    else:
-        filename = filepath.name
-    dst = dst_directory / filename
-    shutil.copy(str(filename), str(dst))
+    dst = dst_directory / filepath
+    shutil.copy(str(filepath), str(dst))
 
 
 def push_to_hub(repo_id: str,
@@ -94,6 +89,7 @@ def push_to_hub(repo_id: str,
 
     # Todo: I need to have a feedback like:
     # You can see your model here "https://huggingface.co/repo_url"
+    print("Your model has been uploaded to the Hub, you can find it here: ", repo_url)
     return repo_url
 
 

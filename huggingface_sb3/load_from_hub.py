@@ -16,11 +16,6 @@ def load_from_hub(repo_id: str, filename: str) -> str:
             "See https://pypi.org/project/huggingface-hub/ for installation."
         )
 
-    # We check if filename has zip extension indicated or not
-    # TODO: For the next version we need to handle other extensions
-    if filename.endswith('.zip') is False and filename.endswith('.mp4') is False:
-        filename += ".zip"
-
     try:
       # Get the model from the Hugging Face Hub
       model_download_url = hf_hub_url(repo_id=repo_id,
