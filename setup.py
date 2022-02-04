@@ -2,6 +2,7 @@ from setuptools import setup
 
 install_requires = [
     "huggingface_hub",
+    "cloudpickle==1.6"
 ]
 
 setup(
