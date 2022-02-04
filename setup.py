@@ -6,7 +6,7 @@ install_requires = [
 
 setup(
     name='huggingface_sb3',
-    version='1.0.2',
+    version='1.0.6',
     packages=['huggingface_sb3'],
     url='https://github.com/huggingface/huggingface_sb3',
     license='Apache',
