@@ -115,7 +115,7 @@ push_to_hub(
     commit_message="Added Cartpole-v1 model trained with PPO",
 )
 ```
-### Case 3: I use Google Colab
+### Case 3: I use Google Colab with Classic Control/Box2D Gym Environments
 - You can use xvbf (virtual screen)
 ```
 !apt-get install -y xvfb python-opengl > /dev/null 2>&1
