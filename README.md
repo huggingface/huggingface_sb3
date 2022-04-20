@@ -62,7 +62,7 @@ import gym
 from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.vec_env import VecVideoRecorder, DummyVecEnv
-from huggingface_sb3_test import load_from_hub, package_to_hub
+from huggingface_sb3 import load_from_hub, package_to_hub
 
 # Create the environment
 env_id = 'LunarLander-v2'
