@@ -250,12 +250,10 @@ def package_to_hub(model,
     print(
         "This function will save, evaluate, generate a video of your agent, create a model card and push everything to the hub. It might take up to 1min. \n This is a work in progress: If you encounter a bug, please send a message to thomas.simonini@huggingface.co and use push_to_hub instead.")
     huggingface_token = HfFolder.get_token()
-
-    temp = repo_id.split('/')
-    organization = temp[0]
-    repo_name = temp[1]
-    print("REPO NAME: ", repo_name)
+    
+    organization, repo_name = repo_id.split('/')
     print("ORGANIZATION: ", organization)
+    print("REPO NAME: ", repo_name)
 
     # Step 1: Clone or create the repo
     # Create the repo (or clone its content if it's nonempty)
@@ -279,10 +277,6 @@ def package_to_hub(model,
 
     # We create two versions of the environment one for video generation and one for evaluation
     replay_env = eval_env
-
-    # Wrap the eval_env around a Monitor
-    # eval_env = Monitor(eval_env)
-    # replay_env = Monitor(replay_env)
 
     # Deterministic by default (except for Atari)
     is_deterministic = not is_atari(env_id)
