@@ -18,7 +18,6 @@ import json
 import gym
 import zipfile
 
-from subprocess import call
 
 README_TEMPLATE = """---
 tags:
@@ -130,12 +129,7 @@ def _generate_replay(model, eval_env, video_length, is_deterministic, repo_local
         inp = "./test.mp4"
         out = "replay.mp4"
         os.system(f"ffmpeg -y -i {inp} -vcodec h264 {out}".format(inp, out))
-        """
-        call([ffmpeg,
-              '-i', "./replay.mp4",
-              '-vcodec', h264,
-              replay.mp4])
-        """
+        
         # Move the video
         shutil.move(os.path.join("./", "replay.mp4"), os.path.join(repo_local_path, "replay.mp4"))
     except KeyboardInterrupt:
@@ -146,7 +140,7 @@ def _generate_replay(model, eval_env, video_length, is_deterministic, repo_local
         print("Please send a message to thomas.simonini@huggingface.co")
 
 
-def select_tags(env_id):
+def generate_metadata(env_id):
     """
     Define the tags for the model card
     :param env_id: name of the environment
@@ -173,7 +167,7 @@ def _generate_model_card(model_name, env_id, mean_reward, std_reward):
     :std_reward: standard deviation of the mean reward of the agent
     """
     # Step 1: Select the tags
-    model_card = select_tags(env_id)
+    model_card = generate_metadata(env_id)
 
     # Step 2: Generate the model card
     model_card += f"""
