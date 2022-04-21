@@ -61,7 +61,7 @@ import gym
 
 from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import DummyVecEnv
-from huggingface_sb3 import load_from_hub, package_to_hub
+from huggingface_sb3 import package_to_hub
 
 # Create the environment
 env_id = 'LunarLander-v2'
@@ -81,7 +81,7 @@ package_to_hub(model=model,
                model_name="ppo-LunarLander-v2",
                model_architecture="PPO",
                env_id=env_id,
-               eval_env = eval_env,
+               eval_env=eval_env,
                repo_id="ThomasSimonini/TEST2-Colab-ppo-LunarLander-v2",
                commit_message="Test commit")
 ```
