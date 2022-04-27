@@ -129,7 +129,7 @@ def _generate_replay(model, eval_env, video_length, is_deterministic, repo_local
         inp = "./test.mp4"
         out = "replay.mp4"
         os.system(f"ffmpeg -y -i {inp} -vcodec h264 {out}".format(inp, out))
-        
+
         # Move the video
         shutil.move(os.path.join("./", "replay.mp4"), os.path.join(repo_local_path, "replay.mp4"))
     except KeyboardInterrupt:
@@ -177,7 +177,7 @@ def _generate_model_card(model_name, env_id, mean_reward, std_reward):
   """
 
     model_card += f"""
-  mean_reward={mean_reward:.2f} +/- {std_reward}
+  mean_reward={mean_reward:.2f} +/- {std_reward:.2f}
   """
 
     model_card += """
@@ -244,7 +244,7 @@ def package_to_hub(model,
     print(
         "This function will save, evaluate, generate a video of your agent, create a model card and push everything to the hub. It might take up to 1min. \n This is a work in progress: If you encounter a bug, please send a message to thomas.simonini@huggingface.co and use push_to_hub instead.")
     huggingface_token = HfFolder.get_token()
-    
+
     organization, repo_name = repo_id.split('/')
     print("ORGANIZATION: ", organization)
     print("REPO NAME: ", repo_name)
