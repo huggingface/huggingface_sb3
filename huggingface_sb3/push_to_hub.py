@@ -59,7 +59,7 @@ def _generate_config(model, repo_local_path):
 def _evaluate_agent(model, eval_env, n_eval_episodes, is_deterministic, repo_local_path):
     """
     Evaluate the agent using SB3 evaluate_policy method and create a results.json
-    :param model: name of the model zip file
+    :param model: name of the model object
     :param eval_env: environment used to evaluate the agent
     :param n_eval_episodes: number of evaluation episodes (by default: 10)
     :param is_deterministic: use deterministic or stochastic actions
@@ -80,7 +80,6 @@ def _evaluate_agent(model, eval_env, n_eval_episodes, is_deterministic, repo_loc
     with open(Path(repo_local_path) / 'results.json', 'w') as outfile:
         json.dump(evaluate_data, outfile)
 
-    print("results", mean_reward)
     return mean_reward, std_reward
 
 
@@ -97,7 +96,7 @@ def is_atari(env_id: str) -> bool:
 def _generate_replay(model, eval_env, video_length, is_deterministic, repo_local_path):
     """
     Generate a replay video of the agent
-    :param model: name of the model
+    :param model: trained model
     :param eval_env: environment used to evaluate the agent
     :param video_length: length of the video (in timesteps)
     :param is_deterministic: use deterministic or stochastic actions
@@ -118,7 +117,6 @@ def _generate_replay(model, eval_env, video_length, is_deterministic, repo_local
         for _ in range(video_length + 1):
             action, _ = model.predict(obs, deterministic=is_deterministic)
             obs, _, _, _ = env.step(action)
-            # env.render()
 
         # Save the video
         env.close()
@@ -137,8 +135,8 @@ def _generate_replay(model, eval_env, video_length, is_deterministic, repo_local
         pass
     except:
         # Add a message for video
-        print("We are unable to generate a replay of your agent")
-        print("Please send a message to thomas.simonini@huggingface.co")
+        logging.error("We are unable to generate a replay of your agent, the package_to_hub process continues")
+        logging.error("Please open an issue https://github.com/huggingface/huggingface_sb3/issues")
 
 
 def generate_metadata(env_id):
@@ -233,22 +231,19 @@ def package_to_hub(model,
       :param model_architecture: name of the architecture of your model (DQN, PPO, A2C, SAC...)
       :param env_id: name of the environment
       :param eval_env: environment used to evaluate the agent
-      :param repo_id: repo_id: id of the model repository from the Hugging Face Hub
+      :param repo_id: id of the model repository from the Hugging Face Hub
       :param commit_message: commit message
       :param is_deterministic: use deterministic or stochastic actions (by default: True)
       :param n_eval_episodes: number of evaluation episodes (by default: 10)
       :param use_auth_token
       :param local_repo_path: local repository path
-      :param video_length:
       :param video_length: length of the video (in timesteps)
       """
-    print(
+    logging.info(
         "This function will save, evaluate, generate a video of your agent, create a model card and push everything to the hub. It might take up to 1min. \n This is a work in progress: If you encounter a bug, please send a message to thomas.simonini@huggingface.co and use push_to_hub instead.")
     huggingface_token = HfFolder.get_token()
 
     organization, repo_name = repo_id.split('/')
-    print("ORGANIZATION: ", organization)
-    print("REPO NAME: ", repo_name)
 
     # Step 1: Clone or create the repo
     # Create the repo (or clone its content if it's nonempty)
@@ -275,7 +270,6 @@ def package_to_hub(model,
 
     # Deterministic by default (except for Atari)
     is_deterministic = not is_atari(env_id)
-    print("IS DETERMINISTIC", is_deterministic)
 
     # Step 2: Create a config file
     _generate_config(model_name, repo_local_path)
@@ -295,7 +289,7 @@ def package_to_hub(model,
     repo.push_to_hub(commit_message=commit_message)
 
     logging.info(f"Your model is pushed to the hub. You can view your model here: {repo_url}")
-    print(f"Your model is pushed to the hub. You can view your model here: {repo_url}")
+    logging.info(f"Your model is pushed to the hub. You can view your model here: {repo_url}")
     return repo_url
 
 
@@ -327,8 +321,6 @@ def push_to_hub(repo_id: str,
     temp = repo_id.split('/')
     organization = temp[0]
     repo_name = temp[1]
-    print("REPO NAME: ", repo_name)
-    print("ORGANIZATION: ", organization)
 
     # Step 1: Clone or create the repo
     # Create the repo (or clone its content if it's nonempty)
@@ -353,9 +345,7 @@ def push_to_hub(repo_id: str,
     logging.info(f"Pushing repo {repo_name} to the Hugging Face Hub")
     repo.push_to_hub(commit_message=commit_message)
 
-    logging.info(f"View your model in {repo_url}")
-
     # Todo: I need to have a feedback like:
     # You can see your model here "https://huggingface.co/repo_url"
-    print("Your model has been uploaded to the Hub, you can find it here: ", repo_url)
+    logging.info(f"Your model has been uploaded to the Hub, you can find it here: {repo_url}")
     return repo_url
