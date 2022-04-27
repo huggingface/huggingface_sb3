@@ -6,6 +6,12 @@ install_requires = [
     "pickle5"
 ]
 
+extras["quality"] = [
+    "black~=22.0",
+    "isort>=5.5.4",
+    "flake8>=3.8.3",
+]
+
 setup(
     name='huggingface_sb3',
     version='2.0.0',
