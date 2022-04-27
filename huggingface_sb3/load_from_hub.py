@@ -17,13 +17,11 @@ def load_from_hub(repo_id: str, filename: str) -> str:
         )
 
     try:
-        # Get the model from the Hugging Face Hub
-        model_download_url = hf_hub_url(repo_id=repo_id,
-                                        filename=filename)
-        # Downloading and caching the model on your local disk
-        downloaded_model_file = cached_download(model_download_url,
+        # Get the model from the Hub, download and cache the model on your local disk
+        downloaded_model_file = hf_hub_download(repo_id=repo_id,
+                                                filename=filename,
                                                 library_name="huggingface-sb3",
-                                                library_version="1.0.7")
+                                                library_version="2.0")
 
     # TODO: I need to find a way to override the HTTPError with mine
     except HTTPError:
