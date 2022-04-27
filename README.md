@@ -88,6 +88,8 @@ package_to_hub(model=model,
 
 
 **With `push_to_hub()`**:
+Push to hub only **push a file to the Hub**, if you want to save, evaluate, generate a model card and record a replay video of your agent before pushing the repo to the hub, use `package_to_hub()`
+
 ```python
 from huggingface_sb3 import push_to_hub
 from stable_baselines3 import PPO
