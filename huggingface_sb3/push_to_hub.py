@@ -187,8 +187,8 @@ def _generate_model_card(model_name, env_id, mean_reward, std_reward):
     return model_card
 
 
-def _create_model_card(repo_dir: Path, generated_model_card):
-    """Creates a model card for the repository.
+def _save_model_card(repo_dir: Path, generated_model_card):
+    """Saves a model card for the repository.
     TODO: Add metrics to model-index
     TODO: Use information from common model cards
     :param repo_dir: repository directory
@@ -283,7 +283,7 @@ def package_to_hub(model,
     # Step 5: Generate the model card
     generated_model_card = _generate_model_card(model_architecture, env_id, mean_reward, std_reward)
 
-    _create_model_card(repo_local_path, generated_model_card)
+    _save_model_card(repo_local_path, generated_model_card)
 
     logging.info(f"Pushing repo {repo_name} to the Hugging Face Hub")
     repo.push_to_hub(commit_message=commit_message)
@@ -340,7 +340,7 @@ def push_to_hub(repo_id: str,
     # Add the model
     filename_path = os.path.abspath(filename)
     _copy_file(Path(filename_path), repo_local_path)
-    _create_model_card(repo_local_path)
+    _save_model_card(repo_local_path)
 
     logging.info(f"Pushing repo {repo_name} to the Hugging Face Hub")
     repo.push_to_hub(commit_message=commit_message)
