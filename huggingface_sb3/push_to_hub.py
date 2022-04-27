@@ -136,7 +136,7 @@ def _generate_replay(model, eval_env, video_length, is_deterministic, repo_local
     except:
         # Add a message for video
         logging.error("We are unable to generate a replay of your agent, the package_to_hub process continues")
-        logging.error("Please open an issue https://github.com/huggingface/huggingface_sb3/issues")
+        logging.error("Please open an issue at https://github.com/huggingface/huggingface_sb3/issues")
 
 
 def generate_metadata(env_id):
