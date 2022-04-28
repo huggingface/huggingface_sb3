@@ -6,6 +6,8 @@ install_requires = [
     "pickle5"
 ]
 
+extras = {}
+
 extras["quality"] = [
     "black~=22.0",
     "isort>=5.5.4",
@@ -22,6 +24,7 @@ setup(
     author_email='thomas.simonini@huggingface.co',
     description='Additional code for Stable-baselines3 to load and upload models from the Hub.',
     install_requires=install_requires,
+    extras_require=extras,
     long_description=open("README.md", "r", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     keywords="reinforcement learning deep reinforcement learning RL",
