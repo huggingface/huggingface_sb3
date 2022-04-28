@@ -221,6 +221,7 @@ def _save_model_card(repo_dir: Path, generated_model_card, metrics):
     else:
         readme = generated_model_card
 
+    print("METRICS in save model card", metrics)
     # Save our metrics to Readme metadata
     metadata_save(readme_path, metrics)
 
@@ -321,6 +322,8 @@ def package_to_hub(model,
 
     # Step 5: Generate the model card
     generated_model_card, metrics = _generate_model_card(model_architecture, env_id, mean_reward, std_reward)
+
+    print(metrics)
 
     _save_model_card(repo_local_path, generated_model_card, metrics)
 
