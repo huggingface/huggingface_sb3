@@ -17,13 +17,12 @@ def load_from_hub(repo_id: str, filename: str) -> str:
             "See https://pypi.org/project/huggingface-hub/ for installation."
         )
 
-    try:
-        # Get the model from the Hub, download and cache the model on your local disk
-        downloaded_model_file = hf_hub_download(
-            repo_id=repo_id,
-            filename=filename,
-            library_name="huggingface-sb3",
-            library_version="2.0",
-        )
-    
-        return downloaded_model_file
+    # Get the model from the Hub, download and cache the model on your local disk
+    downloaded_model_file = hf_hub_download(
+        repo_id=repo_id,
+        filename=filename,
+        library_name="huggingface-sb3",
+        library_version="2.0",
+    )
+
+    return downloaded_model_file
