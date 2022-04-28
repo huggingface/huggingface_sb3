@@ -289,7 +289,7 @@ def package_to_hub(model,
 
     # Git pull
     repo_local_path = Path(local_repo_path) / repo_name
-    repo = Repository(repo_local_path, clone_from=repo_url, use_auth_token=use_auth_token)
+    repo = Repository(repo_local_path, clone_from=repo_url)
     repo.git_pull(rebase=True)
 
     repo.lfs_track(["*.mp4"])
