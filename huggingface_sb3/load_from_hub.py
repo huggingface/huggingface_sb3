@@ -1,7 +1,12 @@
 import logging
 from urllib.error import HTTPError
-from huggingface_hub import hf_hub_download
+from huggingface_hub import hf_hub_download, logging
 
+
+# Set visibility of the Hub logs
+logging.set_verbosity_error()
+logging.set_verbosity_warning()
+logging.set_verbosity_info()
 
 def load_from_hub(repo_id: str, filename: str) -> str:
     """

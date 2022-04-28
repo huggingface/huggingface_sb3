@@ -6,10 +6,8 @@ import shutil
 
 from pathlib import Path
 
-from huggingface_hub import HfApi, HfFolder, Repository
+from huggingface_hub import HfApi, HfFolder, Repository, logging
 from huggingface_hub.repocard import metadata_eval_result, metadata_save
-
-
 
 import stable_baselines3
 from stable_baselines3 import *
@@ -31,6 +29,11 @@ tags:
 ---
 # TODO: Fill this model card
 """
+
+# Set visibility of the Hub logs
+logging.set_verbosity_error()
+logging.set_verbosity_warning()
+logging.set_verbosity_info()
 
 
 def _generate_config(model, repo_local_path):
@@ -72,7 +75,6 @@ def _evaluate_agent(model, eval_env, n_eval_episodes, is_deterministic, repo_loc
     # Step 1: Evaluate the agent
     mean_reward, std_reward = evaluate_policy(model, eval_env, n_eval_episodes, is_deterministic)
 
-    print("Done")
     # Step 2: Create json evaluation
     ## First get datetime
     eval_datetime = datetime.datetime.now()
@@ -303,7 +305,6 @@ def package_to_hub(model,
     # Deterministic by default (except for Atari)
     if is_deterministic:
         is_deterministic = not is_atari(env_id)
-        print(is_deterministic)
 
     # Step 2: Create a config file
     _generate_config(model_name, repo_local_path)
