@@ -35,6 +35,8 @@ logging.set_verbosity_error()
 logging.set_verbosity_warning()
 logging.set_verbosity_info()
 
+logger = logging.get_logger(__name__)
+
 
 def _generate_config(model, repo_local_path):
     """
@@ -147,8 +149,8 @@ def _generate_replay(model, eval_env, video_length, is_deterministic, repo_local
         pass
     except:
         # Add a message for video
-        logging.error("We are unable to generate a replay of your agent, the package_to_hub process continues")
-        logging.error("Please open an issue at https://github.com/huggingface/huggingface_sb3/issues")
+        logger.error("We are unable to generate a replay of your agent, the package_to_hub process continues")
+        logger.error("Please open an issue at https://github.com/huggingface/huggingface_sb3/issues")
 
 
 def generate_metadata(model_name, env_id, mean_reward, std_reward):
@@ -261,7 +263,7 @@ def package_to_hub(model,
       :param local_repo_path: local repository path
       :param video_length: length of the video (in timesteps)
       """
-    logging.info(
+    logger.info(
         "This function will save, evaluate, generate a video of your agent, create a model card and push everything to the hub. It might take up to 1min. \n This is a work in progress: If you encounter a bug, please open an issue and use push_to_hub instead.")
     huggingface_token = HfFolder.get_token()
 
@@ -320,11 +322,11 @@ def package_to_hub(model,
 
     _save_model_card(repo_local_path, generated_model_card, metadata)
 
-    logging.info(f"Pushing repo {repo_name} to the Hugging Face Hub")
+    logger.info(f"Pushing repo {repo_name} to the Hugging Face Hub")
     repo.push_to_hub(commit_message=commit_message)
 
-    logging.info(f"Your model is pushed to the hub. You can view your model here: {repo_url}")
-    logging.info(f"Your model is pushed to the hub. You can view your model here: {repo_url}")
+    logger.info(f"Your model is pushed to the hub. You can view your model here: {repo_url}")
+    logger.info(f"Your model is pushed to the hub. You can view your model here: {repo_url}")
     return repo_url
 
 
@@ -385,10 +387,10 @@ def push_to_hub(repo_id: str,
     _copy_file(Path(filename_path), repo_local_path)
     _save_model_card(repo_local_path)
 
-    logging.info(f"Pushing repo {repo_name} to the Hugging Face Hub")
+    logger.info(f"Pushing repo {repo_name} to the Hugging Face Hub")
     repo.push_to_hub(commit_message=commit_message)
 
     # Todo: I need to have a feedback like:
     # You can see your model here "https://huggingface.co/repo_url"
-    logging.info(f"Your model has been uploaded to the Hub, you can find it here: {repo_url}")
+    logger.info(f"Your model has been uploaded to the Hub, you can find it here: {repo_url}")
     return repo_url
