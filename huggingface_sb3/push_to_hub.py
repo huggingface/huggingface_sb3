@@ -222,8 +222,6 @@ def _save_model_card(repo_dir: Path, generated_model_card, metadata):
     else:
         readme = generated_model_card
 
-    print("METRICS in save model card", metrics)
-
     with readme_path.open("w", encoding="utf-8") as f:
         f.write(readme)
 
