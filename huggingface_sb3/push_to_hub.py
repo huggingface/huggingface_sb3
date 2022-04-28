@@ -72,6 +72,7 @@ def _evaluate_agent(model, eval_env, n_eval_episodes, is_deterministic, repo_loc
     # Step 1: Evaluate the agent
     mean_reward, std_reward = evaluate_policy(model, eval_env, n_eval_episodes, is_deterministic)
 
+    print("Done")
     # Step 2: Create json evaluation
     ## First get datetime
     eval_datetime = datetime.datetime.now()
