@@ -193,11 +193,6 @@ def _generate_model_card(model_name, env_id, mean_reward, std_reward):
     model_card = f"""
   # **{model_name}** Agent playing **{env_id}**
   This is a trained model of a **{model_name}** agent playing **{env_id}** using the [stable-baselines3 library](https://github.com/DLR-RM/stable-baselines3).
-  ## Evaluation Results
-  """
-
-    model_card += f"""
-  mean_reward={mean_reward:.2f} +/- {std_reward:.2f}
   """
 
     model_card += """
