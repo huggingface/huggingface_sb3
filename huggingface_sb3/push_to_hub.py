@@ -324,7 +324,7 @@ def package_to_hub(model,
     # Step 5: Generate the model card
     generated_model_card, metadata = _generate_model_card(model_architecture, env_id, mean_reward, std_reward)
 
-    _save_model_card(repo_local_path, generated_model_card, metrics)
+    _save_model_card(repo_local_path, generated_model_card, metadata)
 
     logging.info(f"Pushing repo {repo_name} to the Hugging Face Hub")
     repo.push_to_hub(commit_message=commit_message)
