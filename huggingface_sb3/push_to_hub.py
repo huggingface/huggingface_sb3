@@ -220,10 +220,14 @@ def _save_model_card(repo_dir: Path, generated_model_card, metrics):
             readme = f.read()
     else:
         readme = generated_model_card
+
+    # Save our metrics to Readme metadata
+    metadata_save(readme_path, metrics)
+
     with readme_path.open("w", encoding="utf-8") as f:
         f.write(readme)
-        # Save our metrics to Readme metadata
-        metadata_save(readme_path, metrics)
+        
+        
 
 
 def package_to_hub(model,
@@ -261,7 +265,7 @@ def package_to_hub(model,
       :param video_length: length of the video (in timesteps)
       """
     logging.info(
-        "This function will save, evaluate, generate a video of your agent, create a model card and push everything to the hub. It might take up to 1min. \n This is a work in progress: If you encounter a bug, please send a message to thomas.simonini@huggingface.co and use push_to_hub instead.")
+        "This function will save, evaluate, generate a video of your agent, create a model card and push everything to the hub. It might take up to 1min. \n This is a work in progress: If you encounter a bug, please open an issue and use push_to_hub instead.")
     huggingface_token = HfFolder.get_token()
 
     organization, repo_name = repo_id.split('/')
