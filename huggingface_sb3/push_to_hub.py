@@ -323,7 +323,6 @@ def package_to_hub(model,
     repo.push_to_hub(commit_message=commit_message)
 
     msg.info(f"Your model is pushed to the hub. You can view your model here: {repo_url}")
-    msg.info(f"Your model is pushed to the hub. You can view your model here: {repo_url}")
     return repo_url
 
 
