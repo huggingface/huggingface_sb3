@@ -65,7 +65,7 @@ def _evaluate_agent(
     and create a results.json
     :param model: name of the model object
     :param eval_env: environment used to evaluate the agent
-    :param n_eval_episodes: number of evaluation episodes (by default: 10)
+    :param n_eval_episodes: number of evaluation episodes
     :param is_deterministic: use deterministic or stochastic actions
     :param repo_local_path: path of the local repository
     """
@@ -259,7 +259,7 @@ def package_to_hub(
     - It generates the model card
     - It generates a replay video of the agent
     - It pushes everything to the hub
-    This is a work in progress function, if it does not work, 
+    This is a work in progress function, if it does not work,
     use push_to_hub method
     :param model: trained model
     :param model_name: name of the model zip file
@@ -280,17 +280,6 @@ def package_to_hub(
     huggingface_token = HfFolder.get_token()
 
     organization, repo_name = repo_id.split("/")
-
-    if token is None:
-        token = HfFolder.get_token()
-
-    if token is None:
-        raise ValueError(
-            "You must login to the Hugging Face Hub. There are two options: "
-            "(1) Type `huggingface-cli login` in your terminal and enter your token. "
-            "(2) Enter your token in the `token` argument. "
-            "Your token is available in the Settings of your Hugging Face account. "
-        )
 
     # Step 1: Clone or create the repo
     # Create the repo (or clone its content if it's nonempty)
@@ -373,16 +362,6 @@ def push_to_hub(
     :param use_auth_token
     :param local_repo_path: local repository path
     """
-    if token is None:
-        token = HfFolder.get_token()
-
-    if token is None:
-        raise ValueError(
-            "You must login to the Hugging Face Hub. There are two options: "
-            "(1) Type `huggingface-cli login` in your terminal and enter your token. "
-            "(2) Enter your token in the `token` argument. "
-            "Your token is available in the Settings of your Hugging Face account. "
-        )
 
     temp = repo_id.split("/")
     organization = temp[0]

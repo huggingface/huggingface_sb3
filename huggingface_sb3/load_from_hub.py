@@ -25,12 +25,5 @@ def load_from_hub(repo_id: str, filename: str) -> str:
             library_name="huggingface-sb3",
             library_version="2.0",
         )
-
-    # TODO: I need to find a way to override the HTTPError with mine
-    except HTTPError:
-        raise HTTPError(
-            f"This {filename} does not exist. Please verify \n"
-            f"1. That your repository exists https://huggingface.co/{repo_id} \n"
-            f"2. That the filename you want to retrieve is the correct one and is a .zip file"
-        )
-    return downloaded_model_file
+    
+        return downloaded_model_file
