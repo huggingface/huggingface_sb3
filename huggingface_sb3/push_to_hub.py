@@ -232,7 +232,7 @@ def package_to_hub(model,
                    eval_env,
                    repo_id: str,
                    commit_message: str,
-                   is_deterministic: bool,
+                   is_deterministic: bool=True,
                    n_eval_episodes=10,
                    token: Optional[str]=None,
                    local_repo_path="hub",
@@ -303,6 +303,7 @@ def package_to_hub(model,
     # Deterministic by default (except for Atari)
     if is_deterministic:
         is_deterministic = not is_atari(env_id)
+        print(is_deterministic)
 
     # Step 2: Create a config file
     _generate_config(model_name, repo_local_path)
