@@ -376,7 +376,7 @@ def push_to_hub(repo_id: str,
 
     # Git pull
     repo_local_path = Path(local_repo_path) / repo_name
-    repo = Repository(repo_local_path, clone_from=repo_url, use_auth_token=use_auth_token)
+    repo = Repository(repo_local_path, clone_from=repo_url)
     repo.git_pull(rebase=True)
 
     # Add the model
