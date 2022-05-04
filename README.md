@@ -68,8 +68,7 @@ env_id = 'LunarLander-v2'
 env = make_vec_env(env_id, n_envs=1)
 
 # Create the evaluation env
-# Use multiple for faster evaluation
-eval_env = make_vec_env(env_id, n_envs=2)
+eval_env = make_vec_env(env_id, n_envs=1)
 
 # Instantiate the agent
 model = PPO('MlpPolicy', env, verbose=1)
