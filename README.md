@@ -60,15 +60,15 @@ Then
 import gym
 
 from stable_baselines3 import PPO
-from stable_baselines3.common.vec_env import DummyVecEnv
+from stable_baselines3.common.env_util import make_vec_env
 from huggingface_sb3 import package_to_hub
 
 # Create the environment
 env_id = 'LunarLander-v2'
-env = DummyVecEnv([lambda: gym.make(env_id)])
+env = make_vec_env(env_id, n_envs=1)
 
 # Create the evaluation env
-eval_env = DummyVecEnv([lambda: gym.make(env_id)])
+eval_env = make_vec_env(env_id, n_envs=1)
 
 # Instantiate the agent
 model = PPO('MlpPolicy', env, verbose=1)
@@ -94,12 +94,12 @@ Push to hub only **push a file to the Hub**, if you want to save, evaluate, gene
 import gym
 
 from stable_baselines3 import PPO
-from stable_baselines3.common.vec_env import DummyVecEnv
+from stable_baselines3.common.env_util import make_vec_env
 from huggingface_sb3 import push_to_hub
 
 # Create the environment
 env_id = 'LunarLander-v2'
-env = DummyVecEnv([lambda: gym.make(env_id)])
+env = make_vec_env(env_id, n_envs=1)
 
 # Instantiate the agent
 model = PPO('MlpPolicy', env, verbose=1)
