@@ -304,8 +304,8 @@ def package_to_hub(
     saved_model = model.save(Path(repo_local_path) / model_name)
     
     # If we normalizing input features, save the VecNormalize statistics
-    saved_vecnorm = unwrap_vec_normalize()
-    env.save((Path(repo_local_path) / "vec_normalize.pkl"))
+    vecnorm = model.unwrap_vec_normalize()
+    vecnorm.save((Path(repo_local_path) / "vec_normalize.pkl"))
    
     # We create two versions of the environment one for video generation and one for evaluation
     replay_env = eval_env
