@@ -309,6 +309,7 @@ def package_to_hub(
     if vecnorm:
         # Save the VecNormalize statistics to the repo
         vecnorm_path = Path(repo_local_path) / "vec_normalize.pkl"
+        print(vecnorm_path)
         vecnorm.save(vecnorm_path)
         
         # Load the VecNormalize statistics
