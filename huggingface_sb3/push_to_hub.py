@@ -306,7 +306,14 @@ def package_to_hub(
     # If we normalizing input features, save the VecNormalize statistics
     vecnorm = model.get_vec_normalize_env()
     vecnorm.save((Path(repo_local_path) / "vec_normalize.pkl"))
-   
+    
+    eval_env = eval_env.load(vecnorm)
+    
+    #  do not update them at test time
+    eval_env.training = False
+    # reward normalization is not needed at test time
+    eval_env.norm_reward = False
+    
     # We create two versions of the environment one for video generation and one for evaluation
     replay_env = eval_env
 
