@@ -305,6 +305,7 @@ def package_to_hub(
     
     # If we normalizing input features, get and save the VecNormalize statistics
     vecnorm = model.get_vec_normalize_env()
+    print(vecnorm)
     
     if vecnorm:
         # Save the VecNormalize statistics to the repo
