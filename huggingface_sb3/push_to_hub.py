@@ -6,6 +6,7 @@ import zipfile
 from pathlib import Path
 
 import gym
+import numpy as np
 import stable_baselines3
 from huggingface_hub import HfApi, HfFolder, Repository
 from huggingface_hub.repocard import metadata_eval_result, metadata_save
@@ -123,11 +124,19 @@ def _generate_replay(model, eval_env, video_length, is_deterministic, repo_local
     )
 
     obs = env.reset()
-    env.reset()
+    lstm_states = None
+    episode_starts = np.ones((env.num_envs,), dtype=bool)
+
     try:
         for _ in range(video_length + 1):
-            action, _ = model.predict(obs, deterministic=is_deterministic)
-            obs, _, _, _ = env.step(action)
+            action, lstm_states = model.predict(
+                obs,
+                state=lstm_states,
+                episode_start=episode_starts,
+                deterministic=is_deterministic,
+            )
+            obs, _, dones, _ = env.step(action)
+            episode_starts = dones
 
         # Save the video
         env.close()
