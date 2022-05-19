@@ -236,15 +236,23 @@ def _generate_model_card(
 
     # Step 2: Generate the model card
     model_card = f"""
-  # **{model_name}** Agent playing **{env_id}**
-  This is a trained model of a **{model_name}** agent playing **{env_id}**
-  using the [stable-baselines3 library](https://github.com/DLR-RM/stable-baselines3).
-  """
+# **{model_name}** Agent playing **{env_id}**
+This is a trained model of a **{model_name}** agent playing **{env_id}**
+using the [stable-baselines3 library](https://github.com/DLR-RM/stable-baselines3).
+"""
 
     model_card += """
-  ## Usage (with Stable-baselines3)
-  TODO: Add your code
-  """
+## Usage (with Stable-baselines3)
+TODO: Add your code
+
+
+```python
+from stable_baselines3 import ...
+from huggingface_sb3 import load_from_hub
+
+...
+```
+"""
 
     return model_card, metadata
 
