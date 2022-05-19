@@ -11,13 +11,13 @@ import numpy as np
 import stable_baselines3
 from huggingface_hub import HfApi, HfFolder, Repository
 from huggingface_hub.repocard import metadata_eval_result, metadata_save
-from stable_baselines3.common.base_class import BaseModel
+from stable_baselines3.common.base_class import BaseAlgorithm
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.vec_env import (
     DummyVecEnv,
     VecEnv,
     VecVideoRecorder,
-    unwrapvecnormalize,
+    unwrap_vec_normalize,
 )
 from wasabi import Printer
 
@@ -33,7 +33,7 @@ tags:
 msg = Printer()
 
 
-def _generate_config(model: BaseModel, repo_local_path: Path) -> None:
+def _generate_config(model: BaseAlgorithm, repo_local_path: Path) -> None:
     """
     Generate a config.json file containing information
     about the agent and the environment
@@ -64,7 +64,7 @@ def _generate_config(model: BaseModel, repo_local_path: Path) -> None:
 
 
 def _evaluate_agent(
-    model: BaseModel,
+    model: BaseAlgorithm,
     eval_env: VecEnv,
     n_eval_episodes: int,
     is_deterministic: bool,
@@ -116,7 +116,7 @@ def is_atari(env_id: str) -> bool:
 
 
 def _generate_replay(
-    model: BaseModel,
+    model: BaseAlgorithm,
     eval_env: VecEnv,
     video_length: int,
     is_deterministic: bool,
@@ -273,7 +273,7 @@ def _save_model_card(
 
 
 def package_to_hub(
-    model: BaseModel,
+    model: BaseAlgorithm,
     model_name: str,
     model_architecture: str,
     env_id: str,
@@ -351,7 +351,7 @@ def package_to_hub(
 
     # Retrieve VecNormalize wrapper if it exists
     # we need to save the statistics
-    maybe_vec_normalize = unwrapvecnormalize(eval_env)
+    maybe_vec_normalize = unwrap_vec_normalize(eval_env)
 
     # Save the normalization
     if maybe_vec_normalize is not None:
