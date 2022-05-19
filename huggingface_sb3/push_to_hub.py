@@ -9,7 +9,7 @@ from typing import Any, Dict, Optional, Tuple, Union
 import gym
 import numpy as np
 import stable_baselines3
-from huggingface_hub import HfApi, HfFolder, Repository
+from huggingface_hub import HfApi, Repository
 from huggingface_hub.repocard import metadata_eval_result, metadata_save
 from stable_baselines3.common.base_class import BaseAlgorithm
 from stable_baselines3.common.evaluation import evaluate_policy
@@ -20,15 +20,6 @@ from stable_baselines3.common.vec_env import (
     unwrap_vec_normalize,
 )
 from wasabi import Printer
-
-README_TEMPLATE = """---
-tags:
-- deep-reinforcement-learning
-- reinforcement-learning
-- stable-baselines3
----
-# TODO: Fill this model card
-"""
 
 msg = Printer()
 
@@ -315,7 +306,6 @@ def package_to_hub(
     :param commit_message: commit message
     :param is_deterministic: use deterministic or stochastic actions (by default: True)
     :param n_eval_episodes: number of evaluation episodes (by default: 10)
-    :param use_auth_token
     :param local_repo_path: local repository path
     :param video_length: length of the video (in timesteps)
     """
@@ -331,7 +321,6 @@ def package_to_hub(
         "This is a work in progress: if you encounter a bug, please open an issue "
         "and use push_to_hub instead."
     )
-    HfFolder.get_token()
 
     organization, repo_name = repo_id.split("/")
 
