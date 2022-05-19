@@ -5,8 +5,8 @@ check_dirs := huggingface_sb3
 
 
 quality:
-	black --check $(check_dirs)
 	isort --check-only $(check_dirs)
+	black --check $(check_dirs)
 	flake8 $(check_dirs)
 
 style:

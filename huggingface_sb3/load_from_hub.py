@@ -1,8 +1,3 @@
-from urllib.error import HTTPError
-
-from huggingface_hub import hf_hub_download
-
-
 def load_from_hub(repo_id: str, filename: str) -> str:
     """
     Download a model from Hugging Face Hub.
@@ -10,7 +5,7 @@ def load_from_hub(repo_id: str, filename: str) -> str:
     :param filename: name of the model zip file from the repository
     """
     try:
-        from huggingface_hub import cached_download, hf_hub_url
+        from huggingface_hub import hf_hub_download
     except ImportError:
         raise ImportError(
             "You need to install huggingface_hub to use `load_from_hub`. "
@@ -22,7 +17,7 @@ def load_from_hub(repo_id: str, filename: str) -> str:
         repo_id=repo_id,
         filename=filename,
         library_name="huggingface-sb3",
-        library_version="2.0",
+        library_version="2.1",
     )
 
     return downloaded_model_file

@@ -18,7 +18,7 @@ extras["quality"] = [
 
 setup(
     name='huggingface_sb3',
-    version='2.0.0',
+    version='2.1.0',
     packages=['huggingface_sb3'],
     url='https://github.com/huggingface/huggingface_sb3',
     license='Apache',
@@ -31,4 +31,3 @@ setup(
     long_description_content_type="text/markdown",
     keywords="reinforcement learning deep reinforcement learning RL",
 )
-
