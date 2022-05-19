@@ -13,7 +13,12 @@ from huggingface_hub import HfApi, HfFolder, Repository
 from huggingface_hub.repocard import metadata_eval_result, metadata_save
 from stable_baselines3.common.base_class import BaseModel
 from stable_baselines3.common.evaluation import evaluate_policy
-from stable_baselines3.common.vec_env import DummyVecEnv, VecEnv, VecVideoRecorder
+from stable_baselines3.common.vec_env import (
+    DummyVecEnv,
+    VecEnv,
+    VecVideoRecorder,
+    unwrapvecnormalize,
+)
 from wasabi import Printer
 
 README_TEMPLATE = """---
@@ -343,6 +348,18 @@ def package_to_hub(
 
     # Step 1: Save the model
     model.save(Path(repo_local_path) / model_name)
+
+    # Retrieve VecNormalize wrapper if it exists
+    # we need to save the statistics
+    maybe_vec_normalize = unwrapvecnormalize(eval_env)
+
+    # Save the normalization
+    if maybe_vec_normalize is not None:
+        maybe_vec_normalize.save(Path(repo_local_path) / "vec_normalize.pkl")
+        # Do not update the stats at test time
+        maybe_vec_normalize.training = False
+        # Reward normalization is not needed at test time
+        maybe_vec_normalize.norm_reward = False
 
     # We create two versions of the environment:
     # one for video generation and one for evaluation
