@@ -3,7 +3,6 @@ from setuptools import setup
 install_requires = [
     "huggingface_hub",
     "cloudpickle==1.6",
-    "pickle5",
     "pyyaml==6.0",
     "wasabi"
 ]
