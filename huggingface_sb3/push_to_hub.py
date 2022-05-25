@@ -276,7 +276,7 @@ def _add_logdir(repo_dir: Path, logdir: Path):
     :param repo_dir: repository directory
     :param logdir: logdir directory
     """
-    if logdir.exits() and logdir.is_dir():
+    if logdir.exists() and logdir.is_dir():
         # Add the logdir to the repository under new dir called logs
         repo_logdir = repo_dir / "logs"
 
