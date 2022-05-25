@@ -271,6 +271,23 @@ def _save_model_card(
     metadata_save(readme_path, metadata)
 
 
+def _add_logdir(repo_dir: Path, logdir: Path):
+    """Adds a logdir to the repository.
+    :param repo_dir: repository directory
+    :param logdir: logdir directory
+    """
+    if logdir.exits() and logdir.is_dir():
+        # Add the logdir to the repository under new dir called logs
+        repo_logdir = repo_dir / "logs"
+
+        # Delete current logs if they exist
+        if repo_logdir.exists():
+            shutil.rmtree(repo_logdir)
+
+        # Copy logdir into repo logdir
+        shutil.copytree(logdir, repo_logdir)
+
+
 def package_to_hub(
     model: BaseAlgorithm,
     model_name: str,
@@ -284,6 +301,7 @@ def package_to_hub(
     token: Optional[str] = None,
     local_repo_path="hub",
     video_length=1000,
+    logs=None,
 ):
     """
     Evaluate, Generate a video and Upload a model to Hugging Face Hub.
@@ -308,6 +326,7 @@ def package_to_hub(
     :param n_eval_episodes: number of evaluation episodes (by default: 10)
     :param local_repo_path: local repository path
     :param video_length: length of the video (in timesteps)
+    :param logs: directory on local machine of tensorboard logs you'd like to upload
     """
 
     # Autowrap, so we only have VecEnv afterward
@@ -383,6 +402,10 @@ def package_to_hub(
     )
 
     _save_model_card(repo_local_path, generated_model_card, metadata)
+
+    # Step 6: Add logs if needed
+    if logs:
+        _add_logdir(Path(repo_local_path), Path(logs))
 
     msg.info(f"Pushing repo {repo_name} to the Hugging Face Hub")
     repo.push_to_hub(commit_message=commit_message)
