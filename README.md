@@ -17,21 +17,23 @@ If you use **Colab or a Virtual/Screenless Machine**, you can check Case 3 and C
 ```python
 import gym
 
-from huggingface_sb3 import load_from_hub
+from huggingface_sb3 import load_from_hub, RepoId, ModelName, EnvironmentName
 from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
 
 # Retrieve the model from the hub
 ## repo_id = id of the model repository from the Hugging Face Hub (repo_id = {organization}/{repo_name})
 ## filename = name of the model zip file from the repository
+environment_name = EnvironmentName("CartPole-v1")
+model_name = ModelName("ppo", environment_name)
 checkpoint = load_from_hub(
-    repo_id="sb3/demo-hf-CartPole-v1",
-    filename="ppo-CartPole-v1.zip",
+    repo_id=RepoId("sb3", model_name),
+    filename=model_name.filename,
 )
 model = PPO.load(checkpoint)
 
 # Evaluate the agent and watch it
-eval_env = gym.make("CartPole-v1")
+eval_env = gym.make(environment_name.gym_id)
 mean_reward, std_reward = evaluate_policy(
     model, eval_env, render=False, n_eval_episodes=5, deterministic=True, warn=False
 )
@@ -61,14 +63,16 @@ import gym
 
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
-from huggingface_sb3 import package_to_hub
+from huggingface_sb3 import package_to_hub, EnvironmentName, ModelName, RepoId
+
+env_name = EnvironmentName('LunarLander-v2')
+model_name = ModelName("ppo", env_name)
 
 # Create the environment
-env_id = 'LunarLander-v2'
-env = make_vec_env(env_id, n_envs=1)
+env = make_vec_env(env_name.env_id, n_envs=1)
 
 # Create the evaluation env
-eval_env = make_vec_env(env_id, n_envs=1)
+eval_env = make_vec_env(env_name.env_id, n_envs=1)
 
 # Instantiate the agent
 model = PPO('MlpPolicy', env, verbose=1)
@@ -78,11 +82,11 @@ model.learn(total_timesteps=int(5000))
 
 # This method save, evaluate, generate a model card and record a replay video of your agent before pushing the repo to the hub
 package_to_hub(model=model, 
-               model_name="ppo-LunarLander-v2",
+               model_name=model_name,
                model_architecture="PPO",
-               env_id=env_id,
+               env_id=env_name.env_id,
                eval_env=eval_env,
-               repo_id="ThomasSimonini/ppo-LunarLander-v2",
+               repo_id=RepoId("ThomasSimonini", model_name),
                commit_message="Test commit")
 ```
 
@@ -95,11 +99,13 @@ import gym
 
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
-from huggingface_sb3 import push_to_hub
+from huggingface_sb3 import push_to_hub, EnvironmentName, ModelName, RepoId
+
+env_name = EnvironmentName('LunarLander-v2')
+model_name = ModelName("ppo", env_name)
 
 # Create the environment
-env_id = 'LunarLander-v2'
-env = make_vec_env(env_id, n_envs=1)
+env = make_vec_env(env_name.gym_id, n_envs=1)
 
 # Instantiate the agent
 model = PPO('MlpPolicy', env, verbose=1)
@@ -108,15 +114,15 @@ model = PPO('MlpPolicy', env, verbose=1)
 model.learn(total_timesteps=10_000)
 
 # Save the model
-model.save("ppo-LunarLander-v2")
+model.save(model_name)
 
 # Push this saved model .zip file to the hf repo
 # If this repo does not exists it will be created
 ## repo_id = id of the model repository from the Hugging Face Hub (repo_id = {organization}/{repo_name})
 ## filename: the name of the file == "name" inside model.save("ppo-LunarLander-v2")
 push_to_hub(
-    repo_id="ThomasSimonini/ppo-LunarLander-v2",
-    filename="ppo-LunarLander-v2.zip",
+    repo_id=RepoId("ThomasSimonini", model_name),
+    filename=model_name.filename,
     commit_message="Added LunarLander-v2 model trained with PPO",
 )
 ```
