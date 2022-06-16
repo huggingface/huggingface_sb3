@@ -65,7 +65,7 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
 from huggingface_sb3 import package_to_hub, EnvironmentName, ModelName, RepoId
 
-env_name = EnvironmentName('LunarLander-v2')
+env_name = EnvironmentName("LunarLander-v2")
 model_name = ModelName("ppo", env_name)
 
 # Create the environment
