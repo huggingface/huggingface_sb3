@@ -53,6 +53,11 @@ class ModelName(str):
         return f"{self}.zip"
 
 
-class RepoId(str):
+class ModelRepoId(str):
+    """
+    The name of a repository. Derived from the associated organization and the model
+    name.
+    """
+
     def __new__(cls, org: str, model_name: ModelName):
         return super().__new__(cls, f"{org}/{model_name}")

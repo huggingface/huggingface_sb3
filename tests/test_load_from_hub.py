@@ -1,6 +1,6 @@
 import gym
 
-from huggingface_sb3 import load_from_hub, RepoId, ModelName, EnvironmentName
+from huggingface_sb3 import load_from_hub, ModelRepoId, ModelName, EnvironmentName
 from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
 
@@ -12,7 +12,7 @@ def test_load_from_hub():
     environment_name = EnvironmentName("CartPole-v1")
     model_name = ModelName("ppo", environment_name)
     checkpoint = load_from_hub(
-        repo_id=RepoId("sb3", model_name),
+        repo_id=ModelRepoId("sb3", model_name),
         filename=model_name.filename,
     )
     model = PPO.load(checkpoint)

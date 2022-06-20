@@ -14,10 +14,11 @@ We wrote a tutorial on how to use 🤗 Hub and Stable-Baselines3 [here](https://
 If you use **Colab or a Virtual/Screenless Machine**, you can check Case 3 and Case 4.
 
 ### Case 1: I want to download a model from the Hub
+
 ```python
 import gym
 
-from huggingface_sb3 import load_from_hub, RepoId, ModelName, EnvironmentName
+from huggingface_sb3 import load_from_hub, ModelRepoId, ModelName, EnvironmentName
 from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
 
@@ -27,7 +28,7 @@ from stable_baselines3.common.evaluation import evaluate_policy
 environment_name = EnvironmentName("CartPole-v1")
 model_name = ModelName("ppo", environment_name)
 checkpoint = load_from_hub(
-    repo_id=RepoId("sb3", model_name),
+    repo_id=ModelRepoId("sb3", model_name),
     filename=model_name.filename,
 )
 model = PPO.load(checkpoint)
@@ -63,7 +64,7 @@ import gym
 
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
-from huggingface_sb3 import package_to_hub, EnvironmentName, ModelName, RepoId
+from huggingface_sb3 import package_to_hub, EnvironmentName, ModelName, ModelRepoId
 
 env_name = EnvironmentName("LunarLander-v2")
 model_name = ModelName("ppo", env_name)
@@ -81,12 +82,12 @@ model = PPO('MlpPolicy', env, verbose=1)
 model.learn(total_timesteps=int(5000))
 
 # This method save, evaluate, generate a model card and record a replay video of your agent before pushing the repo to the hub
-package_to_hub(model=model, 
+package_to_hub(model=model,
                model_name=model_name,
                model_architecture="PPO",
                env_id=env_name.env_id,
                eval_env=eval_env,
-               repo_id=RepoId("ThomasSimonini", model_name),
+               repo_id=ModelRepoId("ThomasSimonini", model_name),
                commit_message="Test commit")
 ```
 
@@ -99,7 +100,7 @@ import gym
 
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
-from huggingface_sb3 import push_to_hub, EnvironmentName, ModelName, RepoId
+from huggingface_sb3 import push_to_hub, EnvironmentName, ModelName, ModelRepoId
 
 env_name = EnvironmentName("LunarLander-v2")
 model_name = ModelName("ppo", env_name)
@@ -121,7 +122,7 @@ model.save(model_name)
 ## repo_id = id of the model repository from the Hugging Face Hub (repo_id = {organization}/{repo_name})
 ## filename: the name of the file == "name" inside model.save("ppo-LunarLander-v2")
 push_to_hub(
-    repo_id=RepoId("ThomasSimonini", model_name),
+    repo_id=ModelRepoId("ThomasSimonini", model_name),
     filename=model_name.filename,
     commit_message="Added LunarLander-v2 model trained with PPO",
 )
