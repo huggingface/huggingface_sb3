@@ -64,14 +64,14 @@ from stable_baselines3.common.env_util import make_vec_env
 from huggingface_sb3 import package_to_hub
 
 # Create the environment
-env_id = 'LunarLander-v2'
+env_id = "LunarLander-v2"
 env = make_vec_env(env_id, n_envs=1)
 
 # Create the evaluation env
 eval_env = make_vec_env(env_id, n_envs=1)
 
 # Instantiate the agent
-model = PPO('MlpPolicy', env, verbose=1)
+model = PPO("MlpPolicy", env, verbose=1)
 
 # Train the agent
 model.learn(total_timesteps=int(5000))
@@ -98,11 +98,11 @@ from stable_baselines3.common.env_util import make_vec_env
 from huggingface_sb3 import push_to_hub
 
 # Create the environment
-env_id = 'LunarLander-v2'
+env_id = "LunarLander-v2"
 env = make_vec_env(env_id, n_envs=1)
 
 # Instantiate the agent
-model = PPO('MlpPolicy', env, verbose=1)
+model = PPO("MlpPolicy", env, verbose=1)
 
 # Train it for 10000 timesteps
 model.learn(total_timesteps=10_000)
