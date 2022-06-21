@@ -14,27 +14,24 @@ We wrote a tutorial on how to use 🤗 Hub and Stable-Baselines3 [here](https://
 If you use **Colab or a Virtual/Screenless Machine**, you can check Case 3 and Case 4.
 
 ### Case 1: I want to download a model from the Hub
-
 ```python
 import gym
 
-from huggingface_sb3 import load_from_hub, ModelRepoId, ModelName, EnvironmentName
+from huggingface_sb3 import load_from_hub
 from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
 
 # Retrieve the model from the hub
 ## repo_id = id of the model repository from the Hugging Face Hub (repo_id = {organization}/{repo_name})
 ## filename = name of the model zip file from the repository
-environment_name = EnvironmentName("CartPole-v1")
-model_name = ModelName("ppo", environment_name)
 checkpoint = load_from_hub(
-    repo_id=ModelRepoId("sb3", model_name),
-    filename=model_name.filename,
+    repo_id="sb3/demo-hf-CartPole-v1",
+    filename="ppo-CartPole-v1.zip",
 )
 model = PPO.load(checkpoint)
 
 # Evaluate the agent and watch it
-eval_env = gym.make(environment_name.gym_id)
+eval_env = gym.make("CartPole-v1")
 mean_reward, std_reward = evaluate_policy(
     model, eval_env, render=False, n_eval_episodes=5, deterministic=True, warn=False
 )
@@ -64,16 +61,14 @@ import gym
 
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
-from huggingface_sb3 import package_to_hub, EnvironmentName, ModelName, ModelRepoId
-
-env_name = EnvironmentName("LunarLander-v2")
-model_name = ModelName("ppo", env_name)
+from huggingface_sb3 import package_to_hub
 
 # Create the environment
-env = make_vec_env(env_name.env_id, n_envs=1)
+env_id = 'LunarLander-v2'
+env = make_vec_env(env_id, n_envs=1)
 
 # Create the evaluation env
-eval_env = make_vec_env(env_name.env_id, n_envs=1)
+eval_env = make_vec_env(env_id, n_envs=1)
 
 # Instantiate the agent
 model = PPO('MlpPolicy', env, verbose=1)
@@ -82,12 +77,12 @@ model = PPO('MlpPolicy', env, verbose=1)
 model.learn(total_timesteps=int(5000))
 
 # This method save, evaluate, generate a model card and record a replay video of your agent before pushing the repo to the hub
-package_to_hub(model=model,
-               model_name=model_name,
+package_to_hub(model=model, 
+               model_name="ppo-LunarLander-v2",
                model_architecture="PPO",
-               env_id=env_name.env_id,
+               env_id=env_id,
                eval_env=eval_env,
-               repo_id=ModelRepoId("ThomasSimonini", model_name),
+               repo_id="ThomasSimonini/ppo-LunarLander-v2",
                commit_message="Test commit")
 ```
 
@@ -100,13 +95,11 @@ import gym
 
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
-from huggingface_sb3 import push_to_hub, EnvironmentName, ModelName, ModelRepoId
-
-env_name = EnvironmentName("LunarLander-v2")
-model_name = ModelName("ppo", env_name)
+from huggingface_sb3 import push_to_hub
 
 # Create the environment
-env = make_vec_env(env_name.gym_id, n_envs=1)
+env_id = 'LunarLander-v2'
+env = make_vec_env(env_id, n_envs=1)
 
 # Instantiate the agent
 model = PPO('MlpPolicy', env, verbose=1)
@@ -115,15 +108,15 @@ model = PPO('MlpPolicy', env, verbose=1)
 model.learn(total_timesteps=10_000)
 
 # Save the model
-model.save(model_name)
+model.save("ppo-LunarLander-v2")
 
 # Push this saved model .zip file to the hf repo
 # If this repo does not exists it will be created
 ## repo_id = id of the model repository from the Hugging Face Hub (repo_id = {organization}/{repo_name})
 ## filename: the name of the file == "name" inside model.save("ppo-LunarLander-v2")
 push_to_hub(
-    repo_id=ModelRepoId("ThomasSimonini", model_name),
-    filename=model_name.filename,
+    repo_id="ThomasSimonini/ppo-LunarLander-v2",
+    filename="ppo-LunarLander-v2.zip",
     commit_message="Added LunarLander-v2 model trained with PPO",
 )
 ```
@@ -142,4 +135,37 @@ push_to_hub(
 
 ```
 xvfb-run -s "-screen 0 1400x900x24" <your_python_file>
+```
+
+### Case 5: I want to automate upload/download from the Hub
+If you want to upload or download models for many environments, you might want to 
+automate, this process. 
+It makes sense to adhere to a fixed naming scheme for models and repositories.
+You will run into trouble when your environment names contain slashes.
+Therefore, we provide some helper classes:
+
+```python
+import gym
+from huggingface_sb3.naming_schemes import EnvironmentName, ModelName, ModelRepoId
+
+env_name = EnvironmentName("seals/Walker2d-v0")
+model_name = ModelName("ppo", env_name)
+repo_id = ModelRepoId("YourOrganization", model_name)
+
+# prints 'seals-Walker2d-v0'. Notice how the slash is removed so you can use it to 
+# construct file paths if you like.
+print(env_name)
+
+# you can still access the original gym id if needed
+env = gym.make(env_name.gym_id)  
+
+# prints `ppo-seals-Walker2d-v0`
+print(model_name)  
+
+# prints: `ppo-seals-Walker2d-v0.zip`. 
+# This is where `model.save(model_name)` will place the model file
+print(model_name.filename)  
+
+# prints: `YourOrganization/ppo-seals-Walker2d-v0`
+print(repo_id)
 ```
