@@ -5,7 +5,7 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
 
 
-def test_load_from_hub():
+def test_load_from_hub_with_naming_scheme_utils():
     # Retrieve the model from the hub
     ## repo_id = id of the model repository from the Hugging Face Hub (repo_id = {organization}/{repo_name})
     ## filename = name of the model zip file from the repository
