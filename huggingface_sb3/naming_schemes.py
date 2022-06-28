@@ -1,8 +1,9 @@
 """
-This module contains a number of string subclasses that help to adhere to a uniform
-naming scheme for models and repository IDs.
-This is especially helpful when pushing or pulling models in an automated fashion e.g.
-when pushing many models from a benchmark such as the rl baselines zoo
+This module contains string subclasses that help to adhere to a uniform
+naming scheme for repository ids.
+
+This is especially helpful when pushing or pulling models in an automated fashion, e.g.
+when pushing many models from a benchmark such as the RL Baselines3 Zoo.
 https://github.com/DLR-RM/rl-baselines3-zoo
 """
 
