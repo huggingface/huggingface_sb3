@@ -139,7 +139,7 @@ xvfb-run -s "-screen 0 1400x900x24" <your_python_file>
 
 ### Case 5: I want to automate upload/download from the Hub
 If you want to upload or download models for many environments, you might want to 
-automate, this process. 
+automate this process. 
 It makes sense to adhere to a fixed naming scheme for models and repositories.
 You will run into trouble when your environment names contain slashes.
 Therefore, we provide some helper classes:
