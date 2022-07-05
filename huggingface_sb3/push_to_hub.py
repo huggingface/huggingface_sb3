@@ -9,8 +9,9 @@ from typing import Any, Dict, Optional, Tuple, Union
 import gym
 import numpy as np
 import stable_baselines3
-from huggingface_hub import HfApi, Repository
+from huggingface_hub import upload_folder, HfApi
 from huggingface_hub.repocard import metadata_eval_result, metadata_save
+import tempfile
 from stable_baselines3.common.base_class import BaseAlgorithm
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.vec_env import (
@@ -299,7 +300,6 @@ def package_to_hub(
     is_deterministic: bool = True,
     n_eval_episodes=10,
     token: Optional[str] = None,
-    local_repo_path="hub",
     video_length=1000,
     logs=None,
 ):
@@ -311,9 +311,6 @@ def package_to_hub(
     - It generates a replay video of the agent
     - It pushes everything to the hub
 
-    This is a work in progress function, if it does not work,
-    use `push_to_hub` method.
-
     :param model: trained model
     :param model_name: name of the model zip file
     :param model_architecture: name of the architecture of your model
@@ -324,7 +321,6 @@ def package_to_hub(
     :param commit_message: commit message
     :param is_deterministic: use deterministic or stochastic actions (by default: True)
     :param n_eval_episodes: number of evaluation episodes (by default: 10)
-    :param local_repo_path: local repository path
     :param video_length: length of the video (in timesteps)
     :param logs: directory on local machine of tensorboard logs you'd like to upload
     """
@@ -341,78 +337,74 @@ def package_to_hub(
         "and use push_to_hub instead."
     )
 
-    organization, repo_name = repo_id.split("/")
-
-    # Step 1: Clone or create the repo
-    # Create the repo (or clone its content if it's nonempty)
-    api = HfApi()
-
-    repo_url = api.create_repo(
-        name=repo_name,
+    repo_url =  HfApi().create_repo(
+        repo_id=repo_id,
         token=token,
-        organization=organization,
         private=False,
         exist_ok=True,
     )
 
-    # Git pull
-    repo_local_path = Path(local_repo_path) / repo_name
-    repo = Repository(repo_local_path, clone_from=repo_url, use_auth_token=True)
-    repo.git_pull(rebase=True)
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        tmpdirname = Path(tmpdirname)
 
-    repo.lfs_track(["*.mp4"])
+        # Step 1: Save the model
+        model.save(tmpdirname / model_name)
 
-    # Step 1: Save the model
-    model.save(Path(repo_local_path) / model_name)
+        # Retrieve VecNormalize wrapper if it exists
+        # we need to save the statistics
+        maybe_vec_normalize = unwrap_vec_normalize(eval_env)
 
-    # Retrieve VecNormalize wrapper if it exists
-    # we need to save the statistics
-    maybe_vec_normalize = unwrap_vec_normalize(eval_env)
+        # Save the normalization
+        if maybe_vec_normalize is not None:
+            maybe_vec_normalize.save(tmpdirname / "vec_normalize.pkl")
+            # Do not update the stats at test time
+            maybe_vec_normalize.training = False
+            # Reward normalization is not needed at test time
+            maybe_vec_normalize.norm_reward = False
 
-    # Save the normalization
-    if maybe_vec_normalize is not None:
-        maybe_vec_normalize.save(Path(repo_local_path) / "vec_normalize.pkl")
-        # Do not update the stats at test time
-        maybe_vec_normalize.training = False
-        # Reward normalization is not needed at test time
-        maybe_vec_normalize.norm_reward = False
+        # We create two versions of the environment:
+        # one for video generation and one for evaluation
+        replay_env = eval_env
 
-    # We create two versions of the environment:
-    # one for video generation and one for evaluation
-    replay_env = eval_env
+        # Deterministic by default (except for Atari)
+        if is_deterministic:
+            is_deterministic = not is_atari(env_id)
 
-    # Deterministic by default (except for Atari)
-    if is_deterministic:
-        is_deterministic = not is_atari(env_id)
+        # Step 2: Create a config file
+        _generate_config(model_name, tmpdirname)
 
-    # Step 2: Create a config file
-    _generate_config(model_name, repo_local_path)
+        # Step 3: Evaluate the agent
+        mean_reward, std_reward = _evaluate_agent(
+            model, eval_env, n_eval_episodes, is_deterministic, tmpdirname
+        )
 
-    # Step 3: Evaluate the agent
-    mean_reward, std_reward = _evaluate_agent(
-        model, eval_env, n_eval_episodes, is_deterministic, repo_local_path
-    )
+        # Step 4: Generate a video
+        _generate_replay(model, replay_env, video_length, is_deterministic, tmpdirname)
 
-    # Step 4: Generate a video
-    _generate_replay(model, replay_env, video_length, is_deterministic, repo_local_path)
+        # Step 5: Generate the model card
+        generated_model_card, metadata = _generate_model_card(
+            model_architecture, env_id, mean_reward, std_reward
+        )
 
-    # Step 5: Generate the model card
-    generated_model_card, metadata = _generate_model_card(
-        model_architecture, env_id, mean_reward, std_reward
-    )
+        _save_model_card(tmpdirname, generated_model_card, metadata)
 
-    _save_model_card(repo_local_path, generated_model_card, metadata)
+        # Step 6: Add logs if needed
+        if logs:
+            _add_logdir(tmpdirname, Path(logs))
 
-    # Step 6: Add logs if needed
-    if logs:
-        _add_logdir(Path(repo_local_path), Path(logs))
+        msg.info(f"Pushing repo {repo_id} to the Hugging Face Hub")
 
-    msg.info(f"Pushing repo {repo_name} to the Hugging Face Hub")
-    repo.push_to_hub(commit_message=commit_message)
+        repo_url = upload_folder(
+            repo_id=repo_id,
+            folder_path=tmpdirname,
+            path_in_repo="",
+            commit_message=commit_message,
+            token=token
+        )
 
-    msg.info(
-        f"Your model is pushed to the hub. You can view your model here: {repo_url}"
-    )
+        msg.info(
+            f"Your model is pushed to the Hub. You can view your model here: {repo_url}"
+        )
     return repo_url
 
 
@@ -431,7 +423,6 @@ def push_to_hub(
     filename: str,
     commit_message: str,
     token: Optional[str] = None,
-    local_repo_path="hub",
 ):
     """
     Upload a model to Hugging Face Hub.
@@ -442,36 +433,26 @@ def push_to_hub(
     :param local_repo_path: local repository path
     """
 
-    temp = repo_id.split("/")
-    organization = temp[0]
-    repo_name = temp[1]
-
-    # Step 1: Clone or create the repo
-    # Create the repo (or clone its content if it's nonempty)
-    api = HfApi()
-    repo_url = api.create_repo(
-        name=repo_name,
+    repo_url =  HfApi().create_repo(
+        repo_id=repo_id,
         token=token,
-        organization=organization,
         private=False,
         exist_ok=True,
     )
 
-    # Git pull
-    repo_local_path = Path(local_repo_path) / repo_name
-    repo = Repository(repo_local_path, clone_from=repo_url, use_auth_token=True)
-    repo.git_pull(rebase=True)
-
     # Add the model
-    filename_path = os.path.abspath(filename)
-    _copy_file(Path(filename_path), repo_local_path)
-    _save_model_card(repo_local_path, "", {})
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        filename_path = os.path.abspath(filename)
+        _copy_file(Path(filename_path), tmpdirname)
+        _save_model_card(tmpdirname, "", {})
 
-    msg.info(f"Pushing repo {repo_name} to the Hugging Face Hub")
-    repo.push_to_hub(commit_message=commit_message)
+    msg.info(f"Pushing repo {repo_id} to the Hugging Face Hub")
+    repo_url = upload_folder(
+            repo_id=repo_id,
+            commit_message=commit_message,
+            token=token
+        )
 
-    # Todo: I need to have a feedback like:
-    # You can see your model here "https://huggingface.co/repo_url"
     msg.good(
         f"Your model has been uploaded to the Hub, you can find it here: {repo_url}"
     )
