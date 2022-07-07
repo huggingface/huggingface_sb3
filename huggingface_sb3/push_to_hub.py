@@ -6,7 +6,6 @@ import tempfile
 import zipfile
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, Union
-import glob
 
 import gym
 import numpy as np
@@ -155,7 +154,6 @@ def _generate_replay(
             inp = env.video_recorder.path
             out = os.path.join(local_path, "replay.mp4")
             os.system(f"ffmpeg -y -i {inp} -vcodec h264 {out}".format(inp, out))
-
 
         except KeyboardInterrupt:
             pass
