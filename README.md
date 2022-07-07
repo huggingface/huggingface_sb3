@@ -64,14 +64,14 @@ from stable_baselines3.common.env_util import make_vec_env
 from huggingface_sb3 import package_to_hub
 
 # Create the environment
-env_id = 'LunarLander-v2'
+env_id = "LunarLander-v2"
 env = make_vec_env(env_id, n_envs=1)
 
 # Create the evaluation env
 eval_env = make_vec_env(env_id, n_envs=1)
 
 # Instantiate the agent
-model = PPO('MlpPolicy', env, verbose=1)
+model = PPO("MlpPolicy", env, verbose=1)
 
 # Train the agent
 model.learn(total_timesteps=int(5000))
@@ -98,11 +98,11 @@ from stable_baselines3.common.env_util import make_vec_env
 from huggingface_sb3 import push_to_hub
 
 # Create the environment
-env_id = 'LunarLander-v2'
+env_id = "LunarLander-v2"
 env = make_vec_env(env_id, n_envs=1)
 
 # Instantiate the agent
-model = PPO('MlpPolicy', env, verbose=1)
+model = PPO("MlpPolicy", env, verbose=1)
 
 # Train it for 10000 timesteps
 model.learn(total_timesteps=10_000)
@@ -135,4 +135,37 @@ push_to_hub(
 
 ```
 xvfb-run -s "-screen 0 1400x900x24" <your_python_file>
+```
+
+### Case 5: I want to automate upload/download from the Hub
+If you want to upload or download models for many environments, you might want to 
+automate this process. 
+It makes sense to adhere to a fixed naming scheme for models and repositories.
+You will run into trouble when your environment names contain slashes.
+Therefore, we provide some helper classes:
+
+```python
+import gym
+from huggingface_sb3.naming_schemes import EnvironmentName, ModelName, ModelRepoId
+
+env_name = EnvironmentName("seals/Walker2d-v0")
+model_name = ModelName("ppo", env_name)
+repo_id = ModelRepoId("YourOrganization", model_name)
+
+# prints 'seals-Walker2d-v0'. Notice how the slash is removed so you can use it to 
+# construct file paths if you like.
+print(env_name)
+
+# you can still access the original gym id if needed
+env = gym.make(env_name.gym_id)  
+
+# prints `ppo-seals-Walker2d-v0`
+print(model_name)  
+
+# prints: `ppo-seals-Walker2d-v0.zip`. 
+# This is where `model.save(model_name)` will place the model file
+print(model_name.filename)  
+
+# prints: `YourOrganization/ppo-seals-Walker2d-v0`
+print(repo_id)
 ```
