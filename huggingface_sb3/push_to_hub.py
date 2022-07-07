@@ -2,16 +2,17 @@ import datetime
 import json
 import os
 import shutil
+import tempfile
 import zipfile
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, Union
+import glob
 
 import gym
 import numpy as np
 import stable_baselines3
-from huggingface_hub import upload_folder, HfApi
+from huggingface_hub import HfApi, upload_folder
 from huggingface_hub.repocard import metadata_eval_result, metadata_save
-import tempfile
 from stable_baselines3.common.base_class import BaseAlgorithm
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.vec_env import (
@@ -25,12 +26,12 @@ from wasabi import Printer
 msg = Printer()
 
 
-def _generate_config(model: BaseAlgorithm, repo_local_path: Path) -> None:
+def _generate_config(model: BaseAlgorithm, local_path: Path) -> None:
     """
     Generate a config.json file containing information
     about the agent and the environment
     :param model: name of the model zip file
-    :param repo_local_path: path of the local repository
+    :param local_path: path of the local directory
     """
     unzipped_model_folder = model
 
@@ -39,19 +40,17 @@ def _generate_config(model: BaseAlgorithm, repo_local_path: Path) -> None:
         model += ".zip"
 
     # Step 1: Unzip the model
-    with zipfile.ZipFile(Path(repo_local_path) / model, "r") as zip_ref:
-        zip_ref.extractall(Path(repo_local_path) / unzipped_model_folder)
+    with zipfile.ZipFile(local_path / model, "r") as zip_ref:
+        zip_ref.extractall(local_path / unzipped_model_folder)
 
     # Step 2: Get data (JSON containing infos) and read it
-    with open(
-        Path.joinpath(repo_local_path, unzipped_model_folder, "data")
-    ) as json_file:
+    with open(Path.joinpath(local_path, unzipped_model_folder, "data")) as json_file:
         data = json.load(json_file)
         # Add system_info elements to our JSON
         data["system_info"] = stable_baselines3.get_system_info(print_info=False)[0]
 
     # Step 3: Write our config.json file
-    with open(Path(repo_local_path) / "config.json", "w") as outfile:
+    with open(local_path / "config.json", "w") as outfile:
         json.dump(data, outfile)
 
 
@@ -60,7 +59,7 @@ def _evaluate_agent(
     eval_env: VecEnv,
     n_eval_episodes: int,
     is_deterministic: bool,
-    repo_local_path: Path,
+    local_path: Path,
 ) -> Tuple[float, float]:
     """
     Evaluate the agent using SB3 evaluate_policy method
@@ -70,7 +69,7 @@ def _evaluate_agent(
     :param eval_env: environment used to evaluate the agent
     :param n_eval_episodes: number of evaluation episodes
     :param is_deterministic: use deterministic or stochastic actions
-    :param repo_local_path: path of the local repository
+    :param local_path: path of the local repository
     """
     # Step 1: Evaluate the agent
     mean_reward, std_reward = evaluate_policy(
@@ -91,7 +90,7 @@ def _evaluate_agent(
     }
 
     # Step 3: Write a JSON file
-    with open(Path(repo_local_path) / "results.json", "w") as outfile:
+    with open(local_path / "results.json", "w") as outfile:
         json.dump(evaluate_data, outfile)
 
     return mean_reward, std_reward
@@ -112,7 +111,7 @@ def _generate_replay(
     eval_env: VecEnv,
     video_length: int,
     is_deterministic: bool,
-    repo_local_path: Path,
+    local_path: Path,
 ):
     """
     Generate a replay video of the agent
@@ -120,60 +119,57 @@ def _generate_replay(
     :param eval_env: environment used to evaluate the agent
     :param video_length: length of the video (in timesteps)
     :param is_deterministic: use deterministic or stochastic actions
-    :param repo_local_path: path of the local repository
+    :param local_path: path of the local repository
     """
-    # Step 1: Create the VecVideoRecorder
-    env = VecVideoRecorder(
-        eval_env,
-        "./",  # Temporary video folder
-        record_video_trigger=lambda x: x == 0,
-        video_length=video_length,
-        name_prefix="",
-    )
+    # This is another temporary directory for video outputs
+    # SB3 created a -step-0-to-... meta files as well as other
+    # artifacts which we don't want in the repo.
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        # Step 1: Create the VecVideoRecorder
+        env = VecVideoRecorder(
+            eval_env,
+            tmpdirname,
+            record_video_trigger=lambda x: x == 0,
+            video_length=video_length,
+            name_prefix="",
+        )
 
-    obs = env.reset()
-    lstm_states = None
-    episode_starts = np.ones((env.num_envs,), dtype=bool)
+        obs = env.reset()
+        lstm_states = None
+        episode_starts = np.ones((env.num_envs,), dtype=bool)
 
-    try:
-        for _ in range(video_length + 1):
-            action, lstm_states = model.predict(
-                obs,
-                state=lstm_states,
-                episode_start=episode_starts,
-                deterministic=is_deterministic,
+        try:
+            for _ in range(video_length + 1):
+                action, lstm_states = model.predict(
+                    obs,
+                    state=lstm_states,
+                    episode_start=episode_starts,
+                    deterministic=is_deterministic,
+                )
+                obs, _, episode_starts, _ = env.step(action)
+
+            # Save the video
+            env.close()
+
+            # Convert the video with x264 codec
+            inp = env.video_recorder.path
+            out = os.path.join(local_path, "replay.mp4")
+            os.system(f"ffmpeg -y -i {inp} -vcodec h264 {out}".format(inp, out))
+
+
+        except KeyboardInterrupt:
+            pass
+        except Exception as e:
+            msg.fail(str(e))
+            # Add a message for video
+            msg.fail(
+                "We are unable to generate a replay of your agent, "
+                "the package_to_hub process continues"
             )
-            obs, _, episode_starts, _ = env.step(action)
-
-        # Save the video
-        env.close()
-
-        # Rename the video
-        os.rename(env.video_recorder.path, "test.mp4")
-
-        # Convert the video with x264 codec
-        inp = "./test.mp4"
-        out = "replay.mp4"
-        os.system(f"ffmpeg -y -i {inp} -vcodec h264 {out}".format(inp, out))
-
-        # Move the video
-        shutil.move(
-            os.path.join("./", "replay.mp4"),
-            os.path.join(repo_local_path, "replay.mp4"),
-        )
-    except KeyboardInterrupt:
-        pass
-    except Exception as e:
-        msg.fail(str(e))
-        # Add a message for video
-        msg.fail(
-            "We are unable to generate a replay of your agent, "
-            "the package_to_hub process continues"
-        )
-        msg.fail(
-            "Please open an issue at "
-            "https://github.com/huggingface/huggingface_sb3/issues"
-        )
+            msg.fail(
+                "Please open an issue at "
+                "https://github.com/huggingface/huggingface_sb3/issues"
+            )
 
 
 def generate_metadata(
@@ -250,14 +246,14 @@ from huggingface_sb3 import load_from_hub
 
 
 def _save_model_card(
-    repo_dir: Path, generated_model_card: str, metadata: Dict[str, Any]
+    local_path: Path, generated_model_card: str, metadata: Dict[str, Any]
 ):
     """Saves a model card for the repository.
-    :param repo_dir: repository directory
+    :param local_path: repository directory
     :param generated_model_card: model card generated by _generate_model_card()
     :param metadata: metadata
     """
-    readme_path = repo_dir / "README.md"
+    readme_path = local_path / "README.md"
     readme = ""
     if readme_path.exists():
         with readme_path.open("r", encoding="utf8") as f:
@@ -272,14 +268,14 @@ def _save_model_card(
     metadata_save(readme_path, metadata)
 
 
-def _add_logdir(repo_dir: Path, logdir: Path):
+def _add_logdir(local_path: Path, logdir: Path):
     """Adds a logdir to the repository.
-    :param repo_dir: repository directory
+    :param local_path: repository directory
     :param logdir: logdir directory
     """
     if logdir.exists() and logdir.is_dir():
         # Add the logdir to the repository under new dir called logs
-        repo_logdir = repo_dir / "logs"
+        repo_logdir = local_path / "logs"
 
         # Delete current logs if they exist
         if repo_logdir.exists():
@@ -333,11 +329,10 @@ def package_to_hub(
         "This function will save, evaluate, generate a video of your agent, "
         "create a model card and push everything to the hub. "
         "It might take up to 1min. \n "
-        "This is a work in progress: if you encounter a bug, please open an issue "
-        "and use push_to_hub instead."
+        "This is a work in progress: if you encounter a bug, please open an issue."
     )
 
-    repo_url =  HfApi().create_repo(
+    repo_url = HfApi().create_repo(
         repo_id=repo_id,
         token=token,
         private=False,
@@ -385,7 +380,6 @@ def package_to_hub(
         generated_model_card, metadata = _generate_model_card(
             model_architecture, env_id, mean_reward, std_reward
         )
-
         _save_model_card(tmpdirname, generated_model_card, metadata)
 
         # Step 6: Add logs if needed
@@ -399,7 +393,7 @@ def package_to_hub(
             folder_path=tmpdirname,
             path_in_repo="",
             commit_message=commit_message,
-            token=token
+            token=token,
         )
 
         msg.info(
@@ -429,11 +423,10 @@ def push_to_hub(
     :param repo_id: repo_id: id of the model repository from the Hugging Face Hub
     :param filename: name of the model zip or mp4 file from the repository
     :param commit_message: commit message
-    :param use_auth_token
-    :param local_repo_path: local repository path
+    :param token
     """
 
-    repo_url =  HfApi().create_repo(
+    repo_url = HfApi().create_repo(
         repo_id=repo_id,
         token=token,
         private=False,
@@ -442,15 +435,18 @@ def push_to_hub(
 
     # Add the model
     with tempfile.TemporaryDirectory() as tmpdirname:
+        tmpdirname = Path(tmpdirname)
         filename_path = os.path.abspath(filename)
         _copy_file(Path(filename_path), tmpdirname)
         _save_model_card(tmpdirname, "", {})
 
-    msg.info(f"Pushing repo {repo_id} to the Hugging Face Hub")
-    repo_url = upload_folder(
+        msg.info(f"Pushing repo {repo_id} to the Hugging Face Hub")
+        repo_url = upload_folder(
             repo_id=repo_id,
+            folder_path=tmpdirname,
+            path_in_repo="",
             commit_message=commit_message,
-            token=token
+            token=token,
         )
 
     msg.good(
