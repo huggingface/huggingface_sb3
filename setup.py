@@ -2,7 +2,6 @@ from setuptools import setup
 
 install_requires = [
     "huggingface_hub==0.8.1",
-    "cloudpickle==1.6",
     "pyyaml==6.0",
     "wasabi",
     "numpy",
