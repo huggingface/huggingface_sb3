@@ -5,7 +5,7 @@ install_requires = [
     "pyyaml==6.0",
     "wasabi",
     "numpy",
-    "cloudpickle"
+    "cloudpickle>=1.6"
 ]
 
 extras = {}
@@ -18,7 +18,7 @@ extras["quality"] = [
 
 setup(
     name='huggingface_sb3',
-    version='2.2.2',
+    version='2.2.3',
     packages=['huggingface_sb3'],
     url='https://github.com/huggingface/huggingface_sb3',
     license='Apache',
