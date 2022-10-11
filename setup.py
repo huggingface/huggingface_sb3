@@ -1,8 +1,8 @@
 from setuptools import setup
 
 install_requires = [
-    "huggingface_hub==0.8.1",
-    "pyyaml==6.0",
+    "huggingface_hub~=0.8.1",
+    "pyyaml~=6.0",
     "wasabi",
     "numpy",
     "cloudpickle>=1.6"
@@ -18,7 +18,7 @@ extras["quality"] = [
 
 setup(
     name='huggingface_sb3',
-    version='2.2.3',
+    version='2.2.4',
     packages=['huggingface_sb3'],
     url='https://github.com/huggingface/huggingface_sb3',
     license='Apache',
