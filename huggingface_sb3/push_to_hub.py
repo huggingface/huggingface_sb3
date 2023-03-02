@@ -315,6 +315,8 @@ def package_to_hub(
     :param commit_message: commit message
     :param is_deterministic: use deterministic or stochastic actions (by default: True)
     :param n_eval_episodes: number of evaluation episodes (by default: 10)
+    :param token: authentication token (See https://huggingface.co/settings/token)
+        Caution: your token must remain secret. (See https://huggingface.co/docs/hub/security-tokens)
     :param video_length: length of the video (in timesteps)
     :param logs: directory on local machine of tensorboard logs you'd like to upload
     """
@@ -421,7 +423,8 @@ def push_to_hub(
     :param repo_id: repo_id: id of the model repository from the Hugging Face Hub
     :param filename: name of the model zip or mp4 file from the repository
     :param commit_message: commit message
-    :param token
+    :param token: authentication token (See https://huggingface.co/settings/token)
+        Caution: your token must remain secret. (See https://huggingface.co/docs/hub/security-tokens)
     """
 
     repo_url = HfApi().create_repo(
