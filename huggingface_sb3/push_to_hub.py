@@ -107,8 +107,8 @@ def is_atari(env_id: str) -> bool:
     (Taken from RL-Baselines3-zoo)
     :param env_id: name of the environment
     """
-    entry_point = entry_point(env_id)
-    return "AtariEnv" in str(entry_point)
+    print(entry_point(env_id))
+    return "AtariEnv" in entry_point(env_id)
 
 def _generate_replay(
     model: BaseAlgorithm,
