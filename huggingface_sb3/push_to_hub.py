@@ -137,7 +137,6 @@ def _generate_replay(
             video_length=video_length,
             name_prefix="",
         )
-
         obs = env.reset()
         lstm_states = None
         episode_starts = np.ones((env.num_envs,), dtype=bool)
@@ -150,6 +149,8 @@ def _generate_replay(
                     episode_start=episode_starts,
                     deterministic=is_deterministic,
                 )
+                # Force rgb_array rendering
+                env.render(render_mode="rgb_array")
                 obs, _, episode_starts, _ = env.step(action)
 
             # Save the video
