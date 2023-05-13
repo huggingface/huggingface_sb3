@@ -101,7 +101,7 @@ def is_atari(env_id: str) -> bool:
     (Taken from RL-Baselines3-zoo)
     :param env_id: name of the environment
     """
-    entry_point = gym.envs.registry.env_specs[env_id].entry_point
+    entry_point = gym.envs.registry[env_id].entry_point
     return "AtariEnv" in str(entry_point)
 
 
