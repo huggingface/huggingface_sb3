@@ -138,7 +138,7 @@ def _generate_replay(
         episode_starts = np.ones((env.num_envs,), dtype=bool)
 
         try:
-            for _ in range(video_length + 1):
+            for _ in range(video_length):
                 action, lstm_states = model.predict(
                     obs,
                     state=lstm_states,
