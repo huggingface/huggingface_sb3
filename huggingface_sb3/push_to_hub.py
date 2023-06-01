@@ -1,7 +1,10 @@
 import datetime
 import json
 import os
+import shlex
 import shutil
+import subprocess
+import sys
 import tempfile
 import zipfile
 from pathlib import Path
@@ -153,12 +156,15 @@ def _generate_replay(
             # Convert the video with x264 codec
             inp = env.video_recorder.path
             out = os.path.join(local_path, "replay.mp4")
-            os.system(f"ffmpeg -y -i {inp} -vcodec h264 {out}".format(inp, out))
+            cmd = f"ffmpeg -y -i {inp} -vcodec h264 {out}".format(inp, out)
+            completed_process = subprocess.run(shlex.split(cmd), stdout=subprocess.PIPE,
+                                               stderr=subprocess.STDOUT, check=True)
+            print(completed_process.stdout.decode(), file=sys.stderr)
 
         except KeyboardInterrupt:
             pass
-        except Exception as e:
-            msg.fail(str(e))
+        except subprocess.CalledProcessError as e:
+            msg.fail(e.stderr.decode())
             # Add a message for video
             msg.fail(
                 "We are unable to generate a replay of your agent, "
