@@ -7,11 +7,6 @@ A library to load and upload Stable-baselines3 models from the Hub.
 ```
 pip install huggingface-sb3
 ```
-### IF YOU USE GYMNASIUM ENVIRONMENTS USE THIS INSTALL
-
-```
-pip install git+https://github.com/huggingface/huggingface_sb3@gymnasium
-```
 
 ## Examples
 We wrote a tutorial on how to use 🤗 Hub and Stable-Baselines3 [here](https://colab.research.google.com/github/huggingface/huggingface_sb3/blob/main/notebooks/sb3_huggingface.ipynb)
