@@ -20,7 +20,17 @@ class EnvironmentName(str):
     """
 
     def __new__(cls, gym_id: str):
-        normalized_name = super().__new__(cls, gym_id.replace("/", "-"))
+        normalized_str = gym_id.replace("/", "-")
+        if ":" in normalized_str:
+            split_by_colon = normalized_str.split(":")
+            if len(split_by_colon) == 2:
+                # split by colon and take the first part
+                normalized_str = split_by_colon[1]
+            else:
+                raise ValueError(
+                    f"Environment name {gym_id} contains more than one colon!"
+                )
+        normalized_name = super().__new__(cls, normalized_str)
         normalized_name._gym_id = gym_id
         return normalized_name
 
