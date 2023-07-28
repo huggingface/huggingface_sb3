@@ -5,7 +5,8 @@ install_requires = [
     "pyyaml~=6.0",
     "wasabi",
     "numpy",
-    "cloudpickle>=1.6"
+    "cloudpickle>=1.6",
+    "shimmy>=0.2.1"
 ]
 
 extras = {}

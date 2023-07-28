@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 
 from huggingface_sb3 import load_from_hub, ModelRepoId, ModelName, EnvironmentName
 from stable_baselines3 import PPO

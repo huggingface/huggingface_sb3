@@ -7,7 +7,7 @@ import zipfile
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, Union
 
-import gym
+import gymnasium as gym
 import numpy as np
 import stable_baselines3
 from huggingface_hub import HfApi, upload_folder
