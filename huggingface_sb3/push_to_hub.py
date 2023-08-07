@@ -7,7 +7,6 @@ import zipfile
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, Union
 
-import gym as gym26
 import gymnasium as gym
 import numpy as np
 import stable_baselines3
@@ -99,6 +98,7 @@ def entry_point(env_id: str) -> str:
     try:
         return str(gym.envs.registry[env_id].entry_point)
     except KeyError:
+        import gym as gym26
         return str(gym26.envs.registry[env_id].entry_point)
 
 def is_atari(env_id: str) -> bool:
