@@ -7,7 +7,7 @@ import zipfile
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, Union
 
-import gym
+import gymnasium as gym
 import numpy as np
 import stable_baselines3
 from huggingface_hub import HfApi, upload_folder
@@ -94,6 +94,12 @@ def _evaluate_agent(
 
     return mean_reward, std_reward
 
+def entry_point(env_id: str) -> str:
+    try:
+        return str(gym.envs.registry[env_id].entry_point)
+    except KeyError:
+        import gym as gym26
+        return str(gym26.envs.registry[env_id].entry_point)
 
 def is_atari(env_id: str) -> bool:
     """
@@ -101,8 +107,7 @@ def is_atari(env_id: str) -> bool:
     (Taken from RL-Baselines3-zoo)
     :param env_id: name of the environment
     """
-    entry_point = gym.envs.registry.env_specs[env_id].entry_point
-    return "AtariEnv" in str(entry_point)
+    return "AtariEnv" in entry_point(env_id)
 
 
 def _generate_replay(
