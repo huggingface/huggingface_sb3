@@ -1,4 +1,4 @@
-# Hugging Face 🤗 x Stable-baselines3 v2.0
+# Hugging Face 🤗 x Stable-baselines3 v2.3
 
 A library to load and upload Stable-baselines3 models from the Hub.
 
@@ -9,13 +9,13 @@ pip install huggingface-sb3
 ```
 
 ## Examples
-We wrote a tutorial on how to use 🤗 Hub and Stable-Baselines3 [here](https://colab.research.google.com/github/huggingface/huggingface_sb3/blob/main/notebooks/sb3_huggingface.ipynb)
+We wrote a tutorial on how to use 🤗 Hub and Stable-Baselines3 [here](https://colab.research.google.com/github/huggingface/deep-rl-class/blob/master/notebooks/unit1/unit1.ipynb)
 
 If you use **Colab or a Virtual/Screenless Machine**, you can check Case 3 and Case 4.
 
 ### Case 1: I want to download a model from the Hub
 ```python
-import gym
+import gymnasium as gym
 
 from huggingface_sb3 import load_from_hub
 from stable_baselines3 import PPO
@@ -57,7 +57,7 @@ Then
 **With `package_to_hub()`**:
 
 ```python
-import gym
+import gymnasium as gym
 
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
@@ -91,7 +91,7 @@ package_to_hub(model=model,
 Push to hub only **push a file to the Hub**, if you want to save, evaluate, generate a model card and record a replay video of your agent before pushing the repo to the hub, use `package_to_hub()`
 
 ```python
-import gym
+import gymnasium as gym
 
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
@@ -145,7 +145,7 @@ You will run into trouble when your environment names contain slashes.
 Therefore, we provide some helper classes:
 
 ```python
-import gym
+import gymnasium as gym
 from huggingface_sb3.naming_schemes import EnvironmentName, ModelName, ModelRepoId
 
 env_name = EnvironmentName("seals/Walker2d-v0")
