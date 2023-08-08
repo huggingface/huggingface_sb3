@@ -42,5 +42,10 @@ def test_that_package_before_colon_is_removed():
     assert env_name == "seals-Walker2d-v0"
 
 
+def test_that_double_colon_is_rejected():
+    with pytest.raises(ValueError):
+        EnvironmentName("seals:seals:Walker2d-v0")
+
+
 def test_that_gym_id_is_preserved(env_id: str, env_name: EnvironmentName):
     assert env_name.gym_id == env_id
