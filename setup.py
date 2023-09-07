@@ -18,7 +18,7 @@ extras["quality"] = [
 
 setup(
     name='huggingface_sb3',
-    version='2.3',
+    version='3.0',
     packages=['huggingface_sb3'],
     url='https://github.com/huggingface/huggingface_sb3',
     license='Apache',
