@@ -1,6 +1,8 @@
-# Hugging Face 🤗 x Stable-baselines3 v2.0
+# Hugging Face 🤗 x Stable-baselines3
 
-A library to load and upload Stable-baselines3 models from the Hub.
+A library to load and upload Stable-baselines3 models from the Hub for Gym Environments.
+
+⚠️ If you use Gymnasium, you need to install `huggingface_sb3>=3.0`
 
 ## Installation
 ### With pip
