@@ -94,12 +94,15 @@ def _evaluate_agent(
 
     return mean_reward, std_reward
 
+
 def entry_point(env_id: str) -> str:
     try:
         return str(gym.envs.registry[env_id].entry_point)
     except KeyError:
         import gym as gym26
+
         return str(gym26.envs.registry[env_id].entry_point)
+
 
 def is_atari(env_id: str) -> bool:
     """
