@@ -1,7 +1,7 @@
 from setuptools import setup
 
 install_requires = [
-    "huggingface_hub~=0.8",
+    "huggingface_hub>=0.21",
     "pyyaml~=6.0",
     "wasabi",
     "numpy",
