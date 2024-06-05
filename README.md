@@ -47,13 +47,17 @@ It currently **works for Gym and Atari environments**. If you use another enviro
 First you need to be logged in to Hugging Face:
 - If you're using Colab/Jupyter Notebooks:
 ```python
-from huggingface_hub import notebook_login
-notebook_login()
+from huggingface_hub import login
+
+login()
 ```
 - Else:
 ```
 huggingface-cli login
 ```
+
+For more details about authentication, check out [this guide](https://huggingface.co/docs/huggingface_hub/quick-start#authentication).
+
 Then
 
 **With `package_to_hub()`**:
