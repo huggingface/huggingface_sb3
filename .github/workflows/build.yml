@@ -8,11 +8,8 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, macos-13, windows-latest]
-        python-version: ['3.7', '3.8', '3.9', '3.10']
-        exclude:
-          # Exclude the combination of macOS-latest and Python 3.7 as arm64 doesn't support Python 3.7
-          - os: macos-latest
-            python-version: '3.7'
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+
     steps:
     # Check out the repository code
     - uses: actions/checkout@v4
