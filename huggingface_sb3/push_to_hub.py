@@ -5,7 +5,7 @@ import shutil
 import tempfile
 import zipfile
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Optional, Tuple, Union
 
 import gymnasium as gym
 import numpy as np
@@ -14,12 +14,7 @@ from huggingface_hub import HfApi, ModelCard, ModelCardData
 from huggingface_hub.repocard import metadata_eval_result
 from stable_baselines3.common.base_class import BaseAlgorithm
 from stable_baselines3.common.evaluation import evaluate_policy
-from stable_baselines3.common.vec_env import (
-    DummyVecEnv,
-    VecEnv,
-    VecVideoRecorder,
-    unwrap_vec_normalize,
-)
+from stable_baselines3.common.vec_env import DummyVecEnv, VecEnv, VecVideoRecorder, unwrap_vec_normalize
 from wasabi import Printer
 
 msg = Printer()
@@ -71,9 +66,7 @@ def _evaluate_agent(
     :param local_path: path of the local repository
     """
     # Step 1: Evaluate the agent
-    mean_reward, std_reward = evaluate_policy(
-        model, eval_env, n_eval_episodes, is_deterministic
-    )
+    mean_reward, std_reward = evaluate_policy(model, eval_env, n_eval_episodes, is_deterministic)
 
     # Step 2: Create json evaluation
     # First get datetime
@@ -94,12 +87,15 @@ def _evaluate_agent(
 
     return mean_reward, std_reward
 
+
 def entry_point(env_id: str) -> str:
     try:
         return str(gym.envs.registry[env_id].entry_point)
     except KeyError:
         import gym as gym26
+
         return str(gym26.envs.registry[env_id].entry_point)
+
 
 def is_atari(env_id: str) -> bool:
     """
@@ -165,19 +161,11 @@ def _generate_replay(
         except Exception as e:
             msg.fail(str(e))
             # Add a message for video
-            msg.fail(
-                "We are unable to generate a replay of your agent, "
-                "the package_to_hub process continues"
-            )
-            msg.fail(
-                "Please open an issue at "
-                "https://github.com/huggingface/huggingface_sb3/issues"
-            )
+            msg.fail("We are unable to generate a replay of your agent, the package_to_hub process continues")
+            msg.fail("Please open an issue at https://github.com/huggingface/huggingface_sb3/issues")
 
 
-def _generate_metadata(
-    model_name: str, env_id: str, mean_reward: float, std_reward: float
-) -> ModelCardData:
+def _generate_metadata(model_name: str, env_id: str, mean_reward: float, std_reward: float) -> ModelCardData:
     """
     Define the tags for the model card
     :param model_name: name of the model
@@ -210,9 +198,7 @@ def _generate_metadata(
     return ModelCardData(**metadata, **eval)
 
 
-def _generate_model_card(
-    model_name: str, env_id: str, mean_reward: float, std_reward: float
-) -> ModelCard:
+def _generate_model_card(model_name: str, env_id: str, mean_reward: float, std_reward: float) -> ModelCard:
     """
     Generate the model card for the Hub
     :param model_name: name of the model
@@ -223,14 +209,21 @@ def _generate_model_card(
     # Step 1: Select the tags
     metadata = _generate_metadata(model_name, env_id, mean_reward, std_reward)
 
-    # Step 2: Generate the model card
-    model_card = f"""
-# **{model_name}** Agent playing **{env_id}**
-This is a trained model of a **{model_name}** agent playing **{env_id}**
+    template = """
+---
+# For reference on model card metadata, see the spec: https://github.com/huggingface/hub-docs/blob/main/modelcard.md?plain=1
+# Doc / guide: https://huggingface.co/docs/hub/model-cards
+{{ card_data }}
+---
+
+# **{{ model_name }}** Agent playing **{{ env_id }}**
+
+This is a trained model of a **{{ model_name }}** agent playing **{{ env_id }}**
 using the [stable-baselines3 library](https://github.com/DLR-RM/stable-baselines3).
 
 
 ## Usage (with Stable-baselines3)
+
 TODO: Add your code
 
 
@@ -242,14 +235,8 @@ from huggingface_sb3 import load_from_hub
 ```
 """
 
-    model_card_template = """
----
-# For reference on model card metadata, see the spec: https://github.com/huggingface/hub-docs/blob/main/modelcard.md?plain=1
-# Doc / guide: https://huggingface.co/docs/hub/model-cards
-{{ card_data }}
----""" + "\n\n" + model_card
-
-    return ModelCard.from_template(card_data=metadata, template_str=model_card_template)
+    # Step 2: Generate the model card
+    return ModelCard.from_template(metadata, template_str=template, model_name=model_name, env_id=env_id)
 
 
 def _add_logdir(local_path: Path, logdir: Path):
@@ -278,9 +265,9 @@ def package_to_hub(
     repo_id: str,
     commit_message: Optional[str] = None,
     is_deterministic: bool = True,
-    n_eval_episodes: int =10,
+    n_eval_episodes: int = 10,
     token: Optional[str] = None,
-    video_length: int =1000,
+    video_length: int = 1000,
     logs=None,
 ):
     """
@@ -319,7 +306,7 @@ def package_to_hub(
     )
 
     api = HfApi(token=token)
-    api.create_repo(repo_id=repo_id, exist_ok=True)
+    repo_url = api.create_repo(repo_id=repo_id, exist_ok=True)
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         tmpdirname = Path(tmpdirname)
@@ -351,24 +338,20 @@ def package_to_hub(
         _generate_config(model_name, tmpdirname)
 
         # Step 3: Evaluate the agent
-        mean_reward, std_reward = _evaluate_agent(
-            model, eval_env, n_eval_episodes, is_deterministic, tmpdirname
-        )
+        mean_reward, std_reward = _evaluate_agent(model, eval_env, n_eval_episodes, is_deterministic, tmpdirname)
 
         # Step 4: Generate a video
         _generate_replay(model, replay_env, video_length, is_deterministic, tmpdirname)
 
         # Step 5: Generate the model card
-        generated_model_card = _generate_model_card(
-            model_architecture, env_id, mean_reward, std_reward
-        )
+        generated_model_card = _generate_model_card(model_architecture, env_id, mean_reward, std_reward)
         generated_model_card.save(tmpdirname / "README.md")
 
         # Step 6: Add logs if needed
         if logs:
             _add_logdir(tmpdirname, Path(logs))
 
-        msg.info(f"Pushing '{filename]' to '{repo_id}' repo on the Hugging Face Hub")
+        msg.info(f"Pushing repo {repo_id} to the Hugging Face Hub")
 
         # Step 7: Upload
         api.upload_folder(
@@ -377,9 +360,7 @@ def package_to_hub(
             commit_message=commit_message,
         )
 
-        msg.good(
-            f"Your model has been uploaded to the Hub, you can find it here: {repo_url}"
-        )
+        msg.good(f"Your model has been uploaded to the Hub, you can find it here: {repo_url}")
     return repo_url
 
 
@@ -401,7 +382,7 @@ def push_to_hub(
     api = HfApi(token=token)
     repo_url = api.create_repo(repo_id=repo_id, exist_ok=True)
 
-    msg.info(f"Pushing '{filename]' to '{repo_id}' repo on the Hugging Face Hub")
+    msg.info(f"Pushing '{filename}' to '{repo_id}' repo on the Hugging Face Hub")
     api.upload_file(
         path_or_fileobj=filename,
         path_in_repo=Path(filename).name,
@@ -409,7 +390,5 @@ def push_to_hub(
         commit_message=commit_message,
     )
 
-    msg.good(
-        f"Your model has been uploaded to the Hub, you can find it here: {repo_url}"
-    )
+    msg.good(f"Your model has been uploaded to the Hub, you can find it here: {repo_url}")
     return repo_url

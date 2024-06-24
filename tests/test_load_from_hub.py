@@ -1,8 +1,8 @@
 import gym
-
-from huggingface_sb3 import load_from_hub, ModelRepoId, ModelName, EnvironmentName
 from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
+
+from huggingface_sb3 import EnvironmentName, ModelName, ModelRepoId, load_from_hub
 
 
 def test_load_from_hub_with_naming_scheme_utils():
@@ -19,9 +19,7 @@ def test_load_from_hub_with_naming_scheme_utils():
 
     # Evaluate the agent and watch it
     eval_env = gym.make(environment_name.gym_id)
-    mean_reward, std_reward = evaluate_policy(
-        model, eval_env, render=False, n_eval_episodes=5, deterministic=True, warn=False
-    )
+    mean_reward, std_reward = evaluate_policy(model, eval_env, render=False, n_eval_episodes=5, deterministic=True, warn=False)
     print(f"mean_reward={mean_reward:.2f} +/- {std_reward}")
 
 
@@ -37,7 +35,5 @@ def test_load_from_hub():
 
     # Evaluate the agent and watch it
     eval_env = gym.make("CartPole-v1")
-    mean_reward, std_reward = evaluate_policy(
-        model, eval_env, render=False, n_eval_episodes=5, deterministic=True, warn=False
-    )
+    mean_reward, std_reward = evaluate_policy(model, eval_env, render=False, n_eval_episodes=5, deterministic=True, warn=False)
     print(f"mean_reward={mean_reward:.2f} +/- {std_reward}")
