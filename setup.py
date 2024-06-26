@@ -6,6 +6,7 @@ install_requires = [
     "wasabi",
     "numpy",
     "cloudpickle>=1.6",
+    "stable-baselines3",
 ]
 
 extras = {}
