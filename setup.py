@@ -16,6 +16,12 @@ extras["quality"] = [
     "flake8>=3.8.3",
 ]
 
+extras["test"] = [
+    "pytest",
+]
+
+extras["dev"] = extras["quality"] + extras["test"]
+
 setup(
     name="huggingface_sb3",
     version="3.1",
