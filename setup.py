@@ -19,6 +19,7 @@ extras["quality"] = [
 
 extras["test"] = [
     "pytest",
+    "gym",
 ]
 
 extras["dev"] = extras["quality"] + extras["test"]
