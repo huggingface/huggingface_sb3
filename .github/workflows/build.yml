@@ -2,6 +2,9 @@ name: build
 
 on: [pull_request, workflow_dispatch]
 
+env:
+  HF_TOKEN: ${{ secrets.HF_TOKEN }}
+
 jobs:
   test:
     runs-on: ${{ matrix.os }}
@@ -29,8 +32,6 @@ jobs:
 
     # Run tests with pytest and generate coverage report
     - name: Test with pytest
-      env:
-        HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
         python -c "import os; print(os.environ.get('HF_TOKEN', '')[:3])"
         pytest
