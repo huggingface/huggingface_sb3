@@ -4,7 +4,7 @@ install_requires = [
     "huggingface_hub>=0.21",
     "pyyaml~=6.0",
     "wasabi",
-    "numpy",
+    "numpy==1.25.2",
     "cloudpickle>=1.6",
     "stable-baselines3",
     "moviepy",
