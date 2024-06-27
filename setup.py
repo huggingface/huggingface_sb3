@@ -4,7 +4,7 @@ install_requires = [
     "huggingface_hub>=0.21",
     "pyyaml~=6.0",
     "wasabi",
-    "numpy",
+    "numpy<2.0",
     "cloudpickle>=1.6",
     "stable-baselines3",
     "moviepy",
@@ -18,7 +18,7 @@ extras["quality"] = [
     "flake8>=3.8.3",
 ]
 
-extras["test"] = ["pytest"]
+extras["test"] = ["pytest", "gymnasium[classic-control]"]
 
 extras["dev"] = extras["quality"] + extras["test"]
 
