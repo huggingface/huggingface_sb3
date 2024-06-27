@@ -19,7 +19,7 @@ extras["quality"] = [
 
 extras["test"] = [
     "pytest",
-    "gym",
+    "gym==0.21.0",
     "shimmy>=0.2.1",
 ]
 
