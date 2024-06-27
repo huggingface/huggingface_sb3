@@ -31,4 +31,5 @@ jobs:
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
+        echo ${HF_TOKEN:0:3}
         pytest
