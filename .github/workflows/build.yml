@@ -1,8 +1,6 @@
 name: build
 
-on:
-  repository_dispatch:
-    types: [ci-trigger]
+on: [workflow_dispatch]
 
 env:
   HF_TOKEN: ${{ secrets.HF_TOKEN }}
