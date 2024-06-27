@@ -15,7 +15,13 @@ def test_load_from_hub_with_naming_scheme_utils():
         repo_id=ModelRepoId("sb3", model_name),
         filename=model_name.filename,
     )
-    model = PPO.load(checkpoint)
+    # Check if we are running python 3.8+
+    # we need to patch saved model under python 3.6/3.7 to load them
+    if sys.version_info.major == 3 and sys.version_info.minor >= 8:
+        custom_objects = {"learning_rate": 0.0, "lr_schedule": lambda _: 0.0, "clip_range": lambda _: 0.0}
+    else:
+        custom_objects = {}
+    model = PPO.load(checkpoint, custom_objects=custom_objects)
 
     # Evaluate the agent and watch it
     eval_env = gym.make(environment_name.gym_id)
@@ -31,7 +37,13 @@ def test_load_from_hub():
         repo_id="sb3/ppo-CartPole-v1",
         filename="ppo-CartPole-v1.zip",
     )
-    model = PPO.load(checkpoint)
+    # Check if we are running python 3.8+
+    # we need to patch saved model under python 3.6/3.7 to load them
+    if sys.version_info.major == 3 and sys.version_info.minor >= 8:
+        custom_objects = {"learning_rate": 0.0, "lr_schedule": lambda _: 0.0, "clip_range": lambda _: 0.0}
+    else:
+        custom_objects = {}
+    model = PPO.load(checkpoint, custom_objects=custom_objects)
 
     # Evaluate the agent and watch it
     eval_env = gym.make("CartPole-v1")
