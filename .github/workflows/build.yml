@@ -32,5 +32,5 @@ jobs:
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
-        echo ${HF_TOKEN:0:3}
+        python -c "import os; print(os.environ.get('HF_TOKEN', '')[:3])"
         pytest
