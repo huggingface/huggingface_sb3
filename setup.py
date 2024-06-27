@@ -18,7 +18,7 @@ extras["quality"] = [
     "flake8>=3.8.3",
 ]
 
-extras["test"] = ["pytest"]
+extras["test"] = ["pytest", "gymnasium[classic-control"]
 
 extras["dev"] = extras["quality"] + extras["test"]
 
