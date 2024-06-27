@@ -7,6 +7,7 @@ install_requires = [
     "numpy",
     "cloudpickle>=1.6",
     "stable-baselines3",
+    "moviepy",
 ]
 
 extras = {}
