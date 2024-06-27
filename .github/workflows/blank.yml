@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 env:
-  MY_SECRET: ${{ secrets.MY_SECRET }}
+  HF_TOKEN: ${{ secrets.HF_TOKEN }}
 
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -34,4 +34,4 @@ jobs:
         run: echo Hello, world!
 
       - name: Echo secret
-        run: python -c "import os; print(os.environ.get('MY_SECRET', '')[:3])"
+        run: python -c "import os; print(os.environ.get('HF_TOKEN', '')[:3])"
