@@ -27,8 +27,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install wheel==0.38.4 setuptools==65.5.0  # https://github.com/openai/gym/issues/3176
-        pip install -e ".[dev]"
+        python -m pip install wheel==0.38.4 setuptools==65.5.1  # https://github.com/openai/gym/issues/3176
+        python -m pip install -e ".[dev]"
 
     # Run tests with pytest and generate coverage report
     - name: Test with pytest
