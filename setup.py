@@ -18,6 +18,7 @@ extras["quality"] = [
 ]
 
 extras["test"] = [
+    "setuptools==65.5.0",  # https://github.com/openai/gym/issues/3176
     "pytest",
     "gym",
     "shimmy>=0.2.1",
