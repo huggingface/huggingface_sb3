@@ -27,9 +27,7 @@ class EnvironmentName(str):
                 # split by colon and take the first part
                 normalized_str = split_by_colon[1]
             else:
-                raise ValueError(
-                    f"Environment name {gym_id} contains more than one colon!"
-                )
+                raise ValueError(f"Environment name {gym_id} contains more than one colon!")
         normalized_name = super().__new__(cls, normalized_str)
         normalized_name._gym_id = gym_id
         return normalized_name
