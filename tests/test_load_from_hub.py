@@ -1,3 +1,4 @@
+import os
 import sys
 
 import gymnasium as gym
@@ -5,6 +6,9 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
 
 from huggingface_sb3 import EnvironmentName, ModelName, ModelRepoId, load_from_hub
+
+# Test models from sb3 organization can be trusted
+os.environ["TRUST_REMOTE_CODE"] = "True"
 
 
 def test_load_from_hub_with_naming_scheme_utils():

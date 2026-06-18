@@ -16,12 +16,20 @@ We wrote a tutorial on how to use 🤗 Hub and Stable-Baselines3 [here](https://
 If you use **Colab or a Virtual/Screenless Machine**, you can check Case 3 and Case 4.
 
 ### Case 1: I want to download a model from the Hub
+
+You will need to set the `TRUST_REMOTE_CODE` environment variable to `True` to allow the use of `pickle.load()`:
+
 ```python
+import os
 import gymnasium as gym
 
 from huggingface_sb3 import load_from_hub
 from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
+
+# Allow the use of `pickle.load()` when downloading model from the hub
+# Please make sure that the organization from which you download can be trusted
+os.environ["TRUST_REMOTE_CODE"] = "True"
 
 # Retrieve the model from the hub
 ## repo_id = id of the model repository from the Hugging Face Hub (repo_id = {organization}/{repo_name})
