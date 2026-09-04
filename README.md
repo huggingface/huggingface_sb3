@@ -78,7 +78,7 @@ from stable_baselines3.common.env_util import make_vec_env
 from huggingface_sb3 import package_to_hub
 
 # Create the environment
-env_id = "LunarLander-v2"
+env_id = "LunarLander-v3"
 env = make_vec_env(env_id, n_envs=1)
 
 # Create the evaluation env
