@@ -5,8 +5,12 @@ on: [workflow_dispatch]
 env:
   HF_TOKEN: ${{ secrets.HF_TOKEN }}
 
+permissions: {}
+
 jobs:
   test:
+    permissions:
+      contents: read
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
