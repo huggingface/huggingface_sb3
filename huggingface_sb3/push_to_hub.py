@@ -152,7 +152,7 @@ def _generate_replay(
             env.close()
 
             # Convert the video with x264 codec
-            inp = env.video_recorder.path
+            inp = env.video_path
             out = os.path.join(local_path, "replay.mp4")
             os.system(f"ffmpeg -y -i {inp} -vcodec h264 {out}".format(inp, out))
 
